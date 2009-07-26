@@ -1,0 +1,40 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+body {
+  padding: 25px;
+  margin: 25px;
+  color: #555;
+}
+form {
+  border: 1px dashed #999;
+  padding: 0;
+  margin: 0 0 25px 0;
+}
+fieldset {
+  border: 1px solid #bbb;
+  background-color: #eee;
+  padding: 20px;
+  margin: 20px;
+}
+legend {
+  font-weight: bold;
+}
+label {
+  border-bottom: 1px dashed #999;
+  padding: 0;
+  margin: 0;
+}
+input {
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #999;
+  display: block;
+  padding: 2px;
+  margin: 10px;
+}
+
+input[type="submit"] {
+  background-color: #ddd;
+}

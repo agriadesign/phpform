@@ -3,24 +3,35 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Form</title>
+<link rel="stylesheet" href="style.css" type="text/css">
+<title>&lt;?php form&gt;</title>
 </head>
 <body>
-
 <?php
 
 require_once("form.class.php");
 
+// Egyszerű form néhány input mezővel és két fieldsettel
 $form = new Form("index.php", "post");
-
 $form->fieldset();
 $form->legend("Login");
-$form->input("Felhasználónév", "text", "felhasznalonev");
-$form->input("Jelszó", "password", "jelszo");
-
+$form->input("text", "felhasznalonev", "Felhasználónév");
+$form->input("password", "jelszo", "Jelszó");
+$form->input("submit", "submit", "", "Belépés");
+$form->fieldset();
+$form->legend("Kérdőív");
+$form->input("text", "velemeny", "Vélemény");
+$form->input("submit", "submit", "", "Elküld");
 $form->renderHTML();
 
-?>
+// Egyszerű file feltöltő form
+$form2 = new Form("index.php", "post", "multipart/form-data");
+$form2->fieldset();
+$form2->legend("Feltöltés");
+$form2->input("file", "file", "File");
+$form2->input("submit", "submit", "", "Feltölt");
+$form2->renderHTML();
 
+?>
 </body>
 </html>
