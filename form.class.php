@@ -1,66 +1,130 @@
 <?php
 
 /******************************/
-/* version 0.0.1 @ 2009.07.26 */
+/* version 0.0.2 @ 2009.08.06 */
 /******************************/
 
 class Form {
   //---------------------------------------------------------------------------
-  protected $_action = "#";
-  protected $_method = "post";
+  protected $_action;
+  protected $_method = NULL;
   protected $_enctype = NULL;
   protected $_fieldsetOpen = FALSE;
-  protected $_formString = "";
+  protected $_form = array();
+  protected static $_instances = 0;
   //---------------------------------------------------------------------------
-  public function __construct($action, $method, $enctype = NULL) {		
+  public function __construct($action, $method = NULL, $enctype = NULL) {
     $this->_action = $action;
-    $this->_method = $method;
-    if(!empty($enctype)) $this->_enctype = $enctype;
-    $this->openTag();
+    if(!empty($method)) {
+      $this->_method = $method;
+    }
+    if(!empty($enctype)) {
+      $this->_enctype = $enctype;
+    }
+    self::$_instances++;
+    $this->open();
   }
   //---------------------------------------------------------------------------
-  protected function openTag() {
-    $this->_formString .=
-    '<form action="' . $this->_action . '" method="' . $this->_method;
-    if(!empty($this->_enctype))
-      $this->_formString .= '" enctype="' . $this->_enctype;
-      $this->_formString .= '">' . "\n";
+  protected function open() {
+    $this->_form[] = array('tag' => 'form', 'action' => $this->_action);
+    if(!empty($this->_method)) {
+      $this->_form[$this->index()] += array('method' => $this->_method);
+    }
+    if(!empty($this->_enctype)) {
+      $this->_form[$this->index()] += array('enctype' => $this->_enctype);
+    }
   }
   //---------------------------------------------------------------------------
   public function fieldset() {
-    $stringing = "";
-    if($this->_fieldsetOpen == TRUE) {
-      $stringing .= "\t</fieldset>\n";
-      $this->_fieldsetOpen = FALSE;
+    if($this->_fieldsetOpen == FALSE) {
+      $this->_form[] = array('tag' => 'fieldset', 'status' => 'open');
+      $this->_fieldsetOpen = TRUE;
+      return;
     }
-    $stringing .= "\t<fieldset>\n";
-    $this->_fieldsetOpen = TRUE;
-    $this->_formString .= $stringing;
+    $this->_form[] = array('tag' => 'fieldset', 'status' => 'close');
+    $this->_fieldsetOpen = FALSE;
   }
   //---------------------------------------------------------------------------
   public function legend($title) {
-    $this->_formString .= "\t\t<legend>$title</legend>\n";
+    $this->_form[] = array('tag' => 'legend', 'content' => $title);
   }
   //---------------------------------------------------------------------------
-  public function input($type, $name, $label, $value = NULL) {
-    $this->_formString .=
-    "\t\t" . '<label for="' . $name . '">' . $label . '</label>' . "\n" .
-    "\t\t" . '<input type="' . $type . '" name="' . $name .
-    '" id="' . $name . '" value="' . $value . '">' . "\n";
+  public function label($content) {
+    $this->_form[] = array('tag' => 'label', 'content' => $content);
   }
   //---------------------------------------------------------------------------
-  protected function closeTag() {
-    $stringing = "";
-    if($this->_fieldsetOpen == TRUE) $stringing .= "\t</fieldset>\n";
-    $stringing .= "</form>\n";
-    $this->_formString .= $stringing;
+  public function input($type, $name, $value = NULL) {
+    $id = $this->id();
+    if($this->_form[$this->index()]['tag'] == 'label') {
+      $this->_form[$this->index()] += array('for' => $id);
+    }
+    $this->_form[] = 
+      array('tag' => 'input', 'type' => $type, 'name' => $name, 'id' => $id);
+    if(!empty($value)) {
+      $this->_form[$this->index()] += array('value' => $value);
+    }
   }
   //---------------------------------------------------------------------------
-  public function renderHTML() {
-    $this->closeTag();
-    print $this->_formString;
+  protected function close() {
+    if($this->_fieldsetOpen == TRUE) {
+      $this->_form[] = array('tag' => 'fieldset', 'status' => 'close');
+    }
+  }
+  //---------------------------------------------------------------------------
+  public function render() {
+    $this->close();
+    foreach($this->_form as $tags) {
+      switch($tags['tag']) {
+        //----- input -----//
+        case 'input': echo"\t\t";
+        //----- form -----//
+        case 'form':
+          foreach($tags as $key => $value) {
+            if ($key == 'tag') {
+              echo'<' . $value;
+            }
+            else {
+              echo' ' . $key . '="' . $value . '"';
+            }
+          }
+          echo ">\n";
+        break;
+        //----- fieldset -----//
+        case 'fieldset':
+          if($tags['status'] == 'open') {
+            echo "\t<fieldset>\n";
+          }
+          if($tags['status'] == 'close') {
+            echo "\t</fieldset>\n";
+          }
+        break;
+        //----- legend -----//
+        case 'legend':
+          echo "\t\t<legend>" . $tags['content'] . "</legend>\n";
+        break;
+        //----- label -----//
+        case 'label':
+          echo "\t\t" . '<label for="' . $tags['for'] . '">' .
+               $tags['content'] . '</label>'. "\n";
+        break;
+      }
+    }
+    echo"</form>\n";
+  }
+  //---------------------------------------------------------------------------
+  protected function index() {
+    return count($this->_form) - 1;
+  }
+  //---------------------------------------------------------------------------
+  protected function id() {
+    $digit = '';
+    if(count($this->_form) < 10) $digit = '0';
+    return 'form-' . self::$_instances . $digit . count($this->_form);
+  }
+  //---------------------------------------------------------------------------
+  public function __toString() {
+    return "<pre>\n" . print_r($this->_form, true) . "</pre>\n";
   }
   //---------------------------------------------------------------------------
 }
-
 ?>

@@ -12,25 +12,32 @@
 require_once("form.class.php");
 
 // Egyszerű form néhány input mezővel és két fieldsettel
-$form = new Form("index.php", "post");
+$form = new Form("index.php");
 $form->fieldset();
 $form->legend("Login");
-$form->input("text", "felhasznalonev", "Felhasználónév");
-$form->input("password", "jelszo", "Jelszó");
-$form->input("submit", "submit", "", "Belépés");
+$form->label("Felhasználónév");
+$form->input("text", "felhasznalonev");
+$form->label("Jelszó");
+$form->input("password", "jelszo");
+$form->input("submit", "submit", "Belépés");
 $form->fieldset();
-$form->legend("Kérdőív");
-$form->input("text", "velemeny", "Vélemény");
-$form->input("submit", "submit", "", "Elküld");
-$form->renderHTML();
+$form->fieldset();
+$form->legend("Vélemény");
+$form->input("text", "velemeny");
+$form->input("submit", "submit", "Elküld");
+$form->fieldset();
+$form->render();
 
 // Egyszerű file feltöltő form
 $form2 = new Form("index.php", "post", "multipart/form-data");
 $form2->fieldset();
 $form2->legend("Feltöltés");
 $form2->input("file", "file", "File");
-$form2->input("submit", "submit", "", "Feltölt");
-$form2->renderHTML();
+$form2->input("submit", "submit", "Feltölt");
+$form2->render();
+
+// Ezzel a __toString metódust hívhatjuk meg
+// echo $form;
 
 ?>
 </body>
