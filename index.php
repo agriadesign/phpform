@@ -12,7 +12,7 @@
 require_once("form.class.php");
 
 // Egyszerű form néhány input mezővel és két fieldsettel
-$form = new Form("index.php");
+$form = new Form("index.php", "post");
 $form->fieldset();
 $form->legend("Login");
 $form->label("Felhasználónév");
@@ -23,8 +23,15 @@ $form->input("submit", "submit", "Belépés");
 $form->fieldset();
 $form->fieldset();
 $form->legend("Vélemény");
-$form->input("text", "velemeny");
-$form->input("submit", "submit", "Elküld");
+$form->textarea(50, 10, "velemeny", "Ide írhatja a véleményét...");
+$form->button("Elküld", "submit");
+$form->fieldset();
+$form->fieldset();
+$form->legend("Elmúltál már 14?");
+$form->label("Igen");
+$form->input("radio", "valasz", "igen");
+$form->label("Nem");
+$form->input("radio", "valasz", "nem", "checked");
 $form->fieldset();
 $form->render();
 

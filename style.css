@@ -3,8 +3,8 @@
   margin: 0;
 }
 body {
-  padding: 25px;
-  margin: 25px;
+  padding: 15px;
+  margin: 15px;
   color: #555;
 }
 form {
@@ -37,4 +37,8 @@ input {
 
 input[type="submit"] {
   background-color: #ddd;
+}
+
+input[type="radio"] {
+	border: none; /* IE */
 }
