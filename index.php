@@ -11,7 +11,7 @@
 
 require_once("form.class.php");
 
-// Egyszerű form néhány input mezővel és két fieldsettel
+// Egyszerű form néhány űrlapelemmel
 $form = new Form("index.php", "post");
 $form->fieldset();
 $form->legend("Login");
@@ -23,6 +23,7 @@ $form->input("submit", "submit", "Belépés");
 $form->fieldset();
 $form->fieldset();
 $form->legend("Vélemény");
+$form->html('<p>Ha szeretné megosztani velünk véleményét, kérjük töltse ki:</p>');
 $form->textarea(50, 10, "velemeny", "Ide írhatja a véleményét...");
 $form->button("Elküld", "submit");
 $form->fieldset();
@@ -45,6 +46,7 @@ $form2->render();
 
 // Ezzel a __toString metódust hívhatjuk meg
 // echo $form;
+// echo $form2;
 
 ?>
 </body>

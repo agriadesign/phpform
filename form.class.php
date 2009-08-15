@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.0.3 @ 2009.08.13 */
+/* version 0.0.4 @ 2009.08.15 */
 /******************************/
 
 class Form {
@@ -49,20 +49,27 @@ class Form {
   }
   //---------------------------------------------------------------------------
   public function legend($title) {
-    $this->_form[] = array('tag' => 'legend', 'content' => $title);
+    $this->_form[] =
+      array('tag' => 'legend', 'status' => 'open', 'content' => $title);
+    $this->_form[] =
+      array('tag' => 'legend', 'status' => 'close');
   }
   //---------------------------------------------------------------------------
   public function label($content) {
-    $this->_form[] = array('tag' => 'label', 'content' => $content);
+    $this->_form[] =
+      array('tag' => 'label', 'status' => 'open', 'content' => $content);
+    $this->_form[] =
+      array('tag' => 'label', 'status' => 'close');
   }
   //---------------------------------------------------------------------------
   public function input($type, $name, $value = NULL, $checked = NULL) {
     $id = $this->id();
-    if($this->_form[$this->index()]['tag'] == 'label') {
-      $this->_form[$this->index()] += array('for' => $id);
+    if($this->_form[$this->index()-1]['tag'] == 'label' &&
+       $this->_form[$this->index()-1]['status'] == 'open') {
+      $this->_form[$this->index()-1] += array('for' => $id);
     }
-    $this->_form[] = 
-      array('tag' => 'input', 'type' => $type, 'name' => $name, 'id' => $id);
+    $this->_form[] = array('tag' => 'input', 'status' => 'empty',
+                           'type' => $type, 'name' => $name, 'id' => $id);
     if(isset($value)) {
       $this->_form[$this->index()] += array('value' => $value);
     }
@@ -72,21 +79,23 @@ class Form {
   }
   //---------------------------------------------------------------------------
   public function textarea($cols, $rows, $name, $content = NULL) {
-    $this->_form[] = array('tag' => 'textarea', 'name' => $name,
-                           'cols' => $cols, 'rows' => $rows);
+    $this->_form[] = array('tag' => 'textarea', 'status' => 'open',
+                           'name' => $name, 'cols' => $cols, 'rows' => $rows);
     if(isset($content)) {
       $this->_form[$this->index()] += array('content' => $content);
     }
+    $this->_form[] = array('tag' => 'textarea', 'status' => 'close');
   }
   //---------------------------------------------------------------------------
   public function button($content, $value, $type = "submit") {
-    $this->_form[] =
-      array('tag' => 'button', 'type' => $type, 'name' => $type,
-            'value' => $value, 'content' => $content,);
+    $this->_form[] = array('tag' => 'button', 'status' => 'open',
+                           'type' => $type, 'name' => $type,
+                           'value' => $value, 'content' => $content,);
+    $this->_form[] = array('tag' => 'button', 'status' => 'close');
   }
   //---------------------------------------------------------------------------
   public function html($content) {
-    	$this->_form[] = array('tag' => 'html', 'content' => $content);
+    	$this->_form[] = array('html' => $content);
   }
   //---------------------------------------------------------------------------
   protected function close() {
@@ -98,68 +107,41 @@ class Form {
   //---------------------------------------------------------------------------
   public function render() {
     $this->close();
-    foreach($this->_form as $tags) {
-      switch($tags['tag']) {
-        //----- input -----//
-        case 'input':
-          echo"\t\t";
-          foreach($tags as $key => $value) {
-            if ($key == 'tag') {
-              echo'<' . $value;
+    $tagName = "";
+    $contentValue = "";
+    foreach($this->_form as $tagArray) {
+      foreach($tagArray as $key => $value) {
+        switch($key) {
+          case "tag":
+            $tagName = $value;
+          break;
+          case "status": 
+            if($value == "close") {
+              echo "</{$tagName}";
             }
-            else if($key != 'status') {
-              echo' ' . $key . '="' . $value . '"';
+            else {
+              echo "<{$tagName}";
             }
-          }
+          break;
+          case "content":
+            $contentValue = $value;
+          break;
+          case "html":
+            echo "{$value}\n";
+          break;
+          default:
+            echo ' ' . $key . '="' . $value . '"';
+          break;
+        }
+      }
+      if($key != "html") {
+        if(empty($contentValue)) {
           echo ">\n";
-        break;
-        //----- form -----//
-        case 'form':
-          foreach($tags as $key => $value) {
-            if ($key == 'status' && $value == 'open') {
-              echo"<form";
-            }
-            if($key != 'tag' && $key != 'status') {
-              echo' ' . $key . '="' . $value . '"';
-            }
-          }
-          if($key == 'status' && $value == 'close') echo "</form";
-          echo ">\n";
-        break;
-        //----- fieldset -----//
-        case 'fieldset':
-          if($tags['status'] == 'open') {
-            echo "\t<fieldset>\n";
-          }
-          if($tags['status'] == 'close') {
-            echo "\t</fieldset>\n";
-          }
-        break;
-        //----- legend -----//
-        case 'legend':
-          echo "\t\t<legend>" . $tags['content'] . "</legend>\n";
-        break;
-        //----- label -----//
-        case 'label':
-          echo "\t\t" . '<label for="' . $tags['for'] . '">' .
-               $tags['content'] . '</label>'. "\n";
-        break;
-        //----- textarea -----//
-        case 'textarea':
-          echo "\t\t". '<textarea cols="' . $tags['cols'] . '" rows="' .
-               $tags['rows'] . '" name="' . $tags['name'] . '">' .
-               $tags['content'] . "</textarea>\n";
-        break;
-        //----- button -----//
-        case 'button':
-          echo "\t\t" . '<button type="' . $tags['type'] . '" name="' .
-          $tags['name'] . '" value="' . $tags['value'] . '">' .
-          $tags['content'] . "</button>\n";
-        break;
-        //----- html -----//
-        case 'html':
-          echo "\t" . $tags['content'] . "\n";
-        break;
+        }
+        else {
+          echo ">{$contentValue}";
+        }
+        $contentValue = "";
       }
     }
   }
