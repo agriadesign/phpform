@@ -13,32 +13,35 @@ require_once("form.class.php");
 
 // Egyszerű form néhány űrlapelemmel
 $form = new Form("index.php", "post");
-$form->fieldset();
+$form->fieldset("Nagy");
+$form->legend("Űrlap");
+$form->fieldset(2);
 $form->legend("Login");
 $form->label("Felhasználónév");
 $form->input("text", "felhasznalonev");
 $form->label("Jelszó");
 $form->input("password", "jelszo");
 $form->input("submit", "submit", "Belépés");
-$form->fieldset();
-$form->fieldset();
+$form->fieldset(2);
+$form->fieldset(3);
 $form->legend("Vélemény");
 $form->html('<p>Ha szeretné megosztani velünk véleményét, kérjük töltse ki:</p>');
 $form->textarea(50, 10, "velemeny", "Ide írhatja a véleményét...");
 $form->button("Elküld", "submit");
-$form->fieldset();
-$form->fieldset();
+$form->fieldset(3);
+$form->fieldset(4);
 $form->legend("Elmúltál már 14?");
 $form->label("Igen");
 $form->input("radio", "valasz", "igen");
 $form->label("Nem");
 $form->input("radio", "valasz", "nem", "checked");
-$form->fieldset();
+$form->fieldset(4);
+$form->fieldset("Nagy");
 $form->render();
 
 // Egyszerű file feltöltő form
 $form2 = new Form("index.php", "post", "multipart/form-data");
-$form2->fieldset();
+$form2->fieldset(11);
 $form2->legend("Feltöltés");
 $form2->input("file", "file", "File");
 $form2->input("submit", "submit", "Feltölt");

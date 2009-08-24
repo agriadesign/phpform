@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.0.4 @ 2009.08.15 */
+/* version 0.0.5 @ 2009.08.24 */
 /******************************/
 
 class Form {
@@ -9,7 +9,7 @@ class Form {
   protected $_action;
   protected $_method;
   protected $_enctype;
-  protected $_fieldsetOpen = FALSE;
+  protected $_fieldsetIds = array();
   protected $_form = array();
   protected static $_instances = 0;
   //---------------------------------------------------------------------------
@@ -36,15 +36,21 @@ class Form {
     }
   }
   //---------------------------------------------------------------------------
-  public function fieldset() {
-    if($this->_fieldsetOpen == FALSE) {
-      $this->_form[] = array('tag' => 'fieldset', 'status' => 'open');
-      $this->_fieldsetOpen = TRUE;
-      return;
+  public function fieldset($id) {
+    $n = count($this->_fieldsetIds);
+    $i = 0;
+    while ($i < $n && $this->_fieldsetIds[$i] != $id) {
+      $i++;
+    }
+    if($i < $n) {
+      $this->_form[] =
+        array('tag' => 'fieldset', 'status' => 'close', 'fieldsetid' => $id);
+      array_splice($this->_fieldsetIds, $i, 1);
     }
     else {
-      $this->_form[] = array('tag' => 'fieldset', 'status' => 'close');
-      $this->_fieldsetOpen = FALSE;
+      $this->_form[] =
+        array('tag' => 'fieldset', 'status' => 'open', 'fieldsetid' => $id);
+      $this->_fieldsetIds[] = $id;
     }
   }
   //---------------------------------------------------------------------------
@@ -99,8 +105,12 @@ class Form {
   }
   //---------------------------------------------------------------------------
   protected function close() {
-    if($this->_fieldsetOpen == TRUE) {
-      $this->_form[] = array('tag' => 'fieldset', 'status' => 'close');
+    $n = count($this->_fieldsetIds);
+    while($n > 0) {
+      $id = array_pop($this->_fieldsetIds);
+      $this->_form[] =
+        array('tag' => 'fieldset', 'status' => 'close', 'fieldsetid' => $id);
+      $n--;
     }
     $this->_form[] = array('tag' => 'form', 'status' => 'close');
   }
@@ -128,6 +138,8 @@ class Form {
           break;
           case "html":
             echo "{$value}\n";
+          break;
+          case "fieldsetid":
           break;
           default:
             echo ' ' . $key . '="' . $value . '"';
