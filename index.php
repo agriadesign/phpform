@@ -36,7 +36,21 @@ $form->input("radio", "valasz", "igen");
 $form->label("Nem");
 $form->input("radio", "valasz", "nem", "checked");
 $form->fieldset(4);
+$form->fieldset(5);
+$form->legend("Kedvenc ételek");
+$form->label("Töltött káposzta");
+$form->input("checkbox", "kedvenc1", "töltött káposzta", "checked");
+$form->label("Rakott burgonya");
+$form->input("checkbox", "kedvenc2", "rakott burgonya");
+$form->label("Gulyásleves");
+$form->input("checkbox", "kedvenc3", "gulyásleves");
+$form->fieldset(5);
 $form->fieldset("Nagy");
+$form->fieldset(6);
+$form->legend("Osztályozó");
+$form->html('<p>Hanyast adnál magadnak?</p>');
+$form->select("valaszto[]", array("egyes", "kettes", "hármas", "négyes", "ötös"), 3);
+$form->fieldset(6);
 $form->render();
 
 // Egyszerű file feltöltő form

@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.0.5 @ 2009.08.24 */
+/* version 0.0.6 @ 2009.09.06 */
 /******************************/
 
 class Form {
@@ -82,6 +82,23 @@ class Form {
     if(isset($checked)) {
       $this->_form[$this->index()] += array('checked' => $checked);
     }
+  }
+  //---------------------------------------------------------------------------
+  public function select($name, array $options, $size = NULL, $multiple = NULL) {
+    $this->_form[] =
+      array('tag' => 'select', 'status' => 'open', 'name' => $name);
+    if(isset($size)) {
+      $this->_form[$this->index()] += array('size' => $size);
+    }
+    if(isset($multiple)) {
+      $this->_form[$this->index()] += array('multiple' => $multiple);
+    }
+    foreach($options as $tmp) {
+      $this->_form[] =
+        array('tag' => 'option', 'status' => 'open', 'content' => $tmp);
+      $this->_form[] = array('tag' => 'option', 'status' => 'close');
+    }
+    $this->_form[] = array('tag' => 'select', 'status' => 'close');
   }
   //---------------------------------------------------------------------------
   public function textarea($cols, $rows, $name, $content = NULL) {
