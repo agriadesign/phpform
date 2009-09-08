@@ -47,9 +47,13 @@ $form->input("checkbox", "kedvenc3", "gulyásleves");
 $form->fieldset(5);
 $form->fieldset("Nagy");
 $form->fieldset(6);
-$form->legend("Osztályozó");
-$form->html('<p>Hanyast adnál magadnak?</p>');
-$form->select("valaszto[]", array("egyes", "kettes", "hármas", "négyes", "ötös"), 3);
+$form->legend("Étterem");
+$form->html('<p>Menü</p>');
+$options = array("Húsleves", "Gulyásleves", "Gyümölcsleves",
+                 "Rántott hús", "Sülthal", "Rakott káposzta",
+                 "Somlói", "Gesztenyepüré", "Palacsinta");
+$optgroups = array("Előétel" => 3, "Főétel" => 3, "Desszert" => 3);
+$form->select("valaszto[]", $options, $optgroups, 5, "multiple");
 $form->fieldset(6);
 $form->render();
 

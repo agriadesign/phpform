@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.0.6 @ 2009.09.06 */
+/* version 0.0.7 @ 2009.09.08 */
 /******************************/
 
 class Form {
@@ -84,7 +84,7 @@ class Form {
     }
   }
   //---------------------------------------------------------------------------
-  public function select($name, array $options, $size = NULL, $multiple = NULL) {
+  public function select($name, array $options, array $optGroups = NULL, $size = NULL, $multiple = NULL) {
     $this->_form[] =
       array('tag' => 'select', 'status' => 'open', 'name' => $name);
     if(isset($size)) {
@@ -93,12 +93,33 @@ class Form {
     if(isset($multiple)) {
       $this->_form[$this->index()] += array('multiple' => $multiple);
     }
-    foreach($options as $tmp) {
-      $this->_form[] =
-        array('tag' => 'option', 'status' => 'open', 'content' => $tmp);
-      $this->_form[] = array('tag' => 'option', 'status' => 'close');
+    if(isset($optGroups)) {
+      foreach($optGroups as $key => $value) {
+        $optGroupNames[] = $key;
+        $optGroupLines[] = $value;
+      }
+      $n = count($optGroupNames);
+      $offset = 0;
+      for($i = 0; $i < $n; $i++) {
+        $this->_form[] =
+          array('tag' => 'optgroup', 'status' => 'open', 'label' => $optGroupNames[$i]);
+        for($j = 0; $j < $optGroupLines[$i]; $j++) {
+          $this->_form[] =
+            array('tag' => 'option', 'status' => 'open', 'content' => $options[$offset]);
+        $this->_form[] = array('tag' => 'option', 'status' => 'close');
+        $offset++;
+        }
+        $this->_form[] = array('tag' => 'optgroup', 'status' => 'close');
+      }
     }
-    $this->_form[] = array('tag' => 'select', 'status' => 'close');
+    else {
+      foreach($options as $tmp) {
+        $this->_form[] =
+          array('tag' => 'option', 'status' => 'open', 'content' => $tmp);
+        $this->_form[] = array('tag' => 'option', 'status' => 'close');
+      }
+		}
+   $this->_form[] = array('tag' => 'select', 'status' => 'close');
   }
   //---------------------------------------------------------------------------
   public function textarea($cols, $rows, $name, $content = NULL) {
