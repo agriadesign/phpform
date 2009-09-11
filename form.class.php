@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.0.8 @ 2009.09.10 */
+/* version 0.0.9 @ 2009.09.11 */
 /******************************/
 
 class Form {
@@ -61,9 +61,15 @@ class Form {
       array('tag' => 'legend', 'status' => 'close');
   }
   //-------------------------------------------------------------------------------------------------------------------
-  public function label($content) {
-    $this->_form[] =
-      array('tag' => 'label', 'status' => 'open', 'content' => $content);
+  public function label($name, $content) {
+    $index = $this->index();
+    if(isset($this->_form[$index]['name']) && $this->_form[$index]['name']== $name) {
+      $this->_form[] =
+        array('tag' => 'label', 'status' => 'open', 'for' => $this->_form[$index]['id'], 'content' => $content);
+    }
+    else {
+      $this->_form[] = array('tag' => 'label', 'status' => 'open', 'content' => $content);
+    }
     $this->_form[] =
       array('tag' => 'label', 'status' => 'close');
   }
