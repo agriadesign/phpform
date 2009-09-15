@@ -2,37 +2,60 @@
   padding: 0;
   margin: 0;
 }
+
 body {
   padding: 15px;
   margin: 15px;
   color: #555;
 }
+
+p {
+  padding: 0;
+  margin: 20px 0;
+}
+
 form {
-  /*border: 1px dashed #999;*/
   padding: 0;
   margin: 0 0 25px 0;
 }
+
 fieldset {
   border: 1px solid #bbb;
-  /*background-color: #eee;*/
-  padding: 20px;
-  margin: 20px;
+  padding: 15px;
+  margin: 10px;
 }
+
+fieldset fieldset{
+  border: 1px dashed #bbb;
+}
+
 legend {
   font-weight: bold;
+  padding: 0 5px;
 }
+
 label {
-  /*border-bottom: 1px dashed #999;*/
   padding: 0;
   margin: 0;
 }
+
 input {
   color: #555;
   background-color: #fff;
   border: 1px solid #999;
-	display: block;
+  display: block;
   padding: 2px;
   margin: 10px;
+}
+
+textarea {
+  border: 1px solid #999;
+}
+
+select {
+  padding: 0;
+  margin: 10px;
+  display: block;
 }
 
 input[type="submit"] {
@@ -41,4 +64,11 @@ input[type="submit"] {
 
 input[type="radio"] {
 	border: none; /* IE */
+	display: inline;
+}
+
+input[type="hidden"] {
+  padding: 0;
+  margin: 0;
+	border: none; /* Firefox */
 }
