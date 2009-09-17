@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.0 @ 2009.09.15 */
+/* version 0.1.1 @ 2009.09.17 */
 /******************************/
 
 class Form {
@@ -9,17 +9,17 @@ class Form {
   protected $_action;
   protected $_method;
   protected $_enctype;
-  protected $_fieldsetIds = array();
+  protected $_fieldsetId = array();
   protected $_form = array();
   protected static $_instances = 0;
   //-------------------------------------------------------------------------------------------------------------------
-  public function setAction($action)
+  public function setAction($value)
   {
-    $extension = explode(".", strtolower($action));
+    $extension = explode(".", strtolower($value));
     if($extension[1] != "php") {
-      throw new Exception("<strong>{$action}</strong> is not a valid value for the 'action' attribute");
+      throw new Exception("<strong>{$value}</strong> is not a valid value for the 'action' attribute");
     }
-    $this->_action = strtolower($action);
+    $this->_action = $value;
   }
   //-------------------------------------------------------------------------------------------------------------------
   public function getAction()
@@ -27,13 +27,13 @@ class Form {
     return $this->_action;
   }
   //-------------------------------------------------------------------------------------------------------------------
-  public function setMethod($method)
+  public function setMethod($value)
   {
-    $method = strtolower($method);
-    if($method != "get" && $method != "post") {
-      throw new Exception("<strong>{$method}</strong> is not a valid value for the 'method' attribute");
+    $value = strtolower($value);
+    if($value != "get" && $value != "post") {
+      throw new Exception("<strong>{$value}</strong> is not a valid value for the 'method' attribute");
     }
-    $this->_method = $method;
+    $this->_method = $value;
   }
   //-------------------------------------------------------------------------------------------------------------------
   public function getMethod()
@@ -41,15 +41,15 @@ class Form {
     return $this->_method;
   }
   //-------------------------------------------------------------------------------------------------------------------
-  public function setEnctype($enctype)
+  public function setEnctype($value)
   {
-    $enctype = strtolower($enctype);
-    if($enctype != "text/plain" &&
-       $enctype != "multipart/form-data" &&
-       $enctype != "application/x-www-form-urlencoded") {
-      throw new Exception("<strong>{$enctype}</strong> is not a valid value for the 'enctype' attribute");
+    $value = strtolower($value);
+    if($value != "text/plain" &&
+       $value != "multipart/form-data" &&
+       $value != "application/x-www-form-urlencoded") {
+      throw new Exception("<strong>{$value}</strong> is not a valid value for the 'enctype' attribute");
     }
-    $this->_enctype = $enctype;
+    $this->_enctype = $value;
   }
   //-------------------------------------------------------------------------------------------------------------------
   public function getEnctype()
@@ -87,22 +87,22 @@ class Form {
   //-------------------------------------------------------------------------------------------------------------------
   public function fieldset($id)
   {
-    $n = count($this->_fieldsetIds);
+    $n = count($this->_fieldsetId);
     $i = 0;
-    while ($i < $n && $this->_fieldsetIds[$i] != $id) {
+    while ($i < $n && $this->_fieldsetId[$i] != $id) {
       $i++;
     }
     if($i < $n) {
       $this->_form[] = array('tag'        => 'fieldset',
                              'status'     => 'close',
                              'fieldsetid' => $id);
-      array_splice($this->_fieldsetIds, $i, 1);
+      array_splice($this->_fieldsetId, $i, 1);
     }
     else {
       $this->_form[] = array('tag'        => 'fieldset',
                              'status'     => 'open',
                              'fieldsetid' => $id);
-      $this->_fieldsetIds[] = $id;
+      $this->_fieldsetId[] = $id;
     }
   }
   //-------------------------------------------------------------------------------------------------------------------
@@ -189,7 +189,14 @@ class Form {
         throw new Exception("<strong>{$type}</strong> is not a valid value for the 'type' attribute");
       break;
     }
-    $attributeNames = array_slice($attributeNames, 0, count($attributeValues));
+    $names = count($attributeNames);
+    $values = count($attributeValues);
+    if($values > $names) {
+      $attributeValues = array_slice($attributeValues, 0, $names);
+    }
+    if($values < $names) {
+      $attributeNames = array_slice($attributeNames, 0, $values);
+    }
     if(!empty($attributeNames)) {
       $attributes = array_combine($attributeNames, $attributeValues);
       foreach($attributes as $key => $value) {
@@ -278,9 +285,9 @@ class Form {
   //-------------------------------------------------------------------------------------------------------------------
   protected function close()
   {
-    $n = count($this->_fieldsetIds);
+    $n = count($this->_fieldsetId);
     while($n > 0) {
-      $id = array_pop($this->_fieldsetIds);
+      $id = array_pop($this->_fieldsetId);
       $this->_form[] = array('tag'        => 'fieldset',
                              'status'     => 'close',
                              'fieldsetid' => $id);
