@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.1 @ 2009.09.17 */
+/* version 0.1.2 @ 2009.09.27 */
 /******************************/
 
 class Form {
@@ -11,7 +11,7 @@ class Form {
   protected $_enctype;
   protected $_fieldsetId = array();
   protected $_form = array();
-  protected static $_instances = 0;
+  protected static $_instanceCounter = 0;
   //-------------------------------------------------------------------------------------------------------------------
   public function setAction($value)
   {
@@ -57,6 +57,16 @@ class Form {
     return $this->_enctype;
   }
   //-------------------------------------------------------------------------------------------------------------------
+  protected function setInstanceCounter($value)
+  {
+    self::$_instanceCounter = $value;
+  }
+  //-------------------------------------------------------------------------------------------------------------------
+  protected function getInstanceCounter()
+  {
+    return self::$_instanceCounter;
+  }
+  //-------------------------------------------------------------------------------------------------------------------
   public function __construct($action, $method = NULL, $enctype = NULL)
   {
     $this->setAction($action);
@@ -66,7 +76,7 @@ class Form {
     if(isset($enctype)) {
       $this->setEnctype($enctype);
     }
-    self::$_instances++;
+    $this->setInstanceCounter($this->getInstanceCounter() + 1);
     $this->open();
   }
   //-------------------------------------------------------------------------------------------------------------------
@@ -74,6 +84,7 @@ class Form {
   {
     $this->_form[] = array('tag'    => 'form',
                            'status' => 'open',
+                           'id'     => $this->id(),
                            'action' => $this->getAction());
     $method = $this->getMethod(); 
     if(isset($method)) {
@@ -117,34 +128,20 @@ class Form {
   //-------------------------------------------------------------------------------------------------------------------
   public function label($name, $content)
   {
-    $index = $this->index();
-    if(isset($this->_form[$index]['name']) && $this->_form[$index]['name']== $name) {
-      $this->_form[] = array('tag'     => 'label',
-                             'status'  => 'open',
-                             'for'     => $this->_form[$index]['id'],
-                             'content' => $content);
-    }
-    else {
-      $this->_form[] = array('tag'     => 'label',
-                             'status'  => 'open',
-                             'content' => $content);
-    }
+    $this->_form[] = array('tag'     => 'label',
+                           'status'  => 'open',
+                           'for'     => $name,
+                           'content' => $content);
     $this->_form[] = array('tag'    => 'label',
                            'status' => 'close');
   }
   //-------------------------------------------------------------------------------------------------------------------
   public function input($type, array $attributeValues)
   {
-    $id = $this->id();
-    $index = $this->index() - 1;
-    if(isset($this->_form[$index]['tag']) &&
-       $this->_form[$index]['tag'] == 'label' && $this->_form[$index]['status'] == 'open') {
-      $this->_form[$index] += array('for' => $id);
-    }
     $this->_form[] = array('tag'    => 'input',
                            'status' => 'empty',
                            'type'   => $type,
-                           'id'     => $id);
+                           'id'     => $this->id());
     switch($type) {
       case "text":
       case "password":
@@ -209,6 +206,7 @@ class Form {
   {
     $this->_form[] = array('tag'    => 'select',
                            'status' => 'open',
+                           'id'     => $this->id(),
                            'name'   => $name);
     if(isset($size)) {
       $this->_form[$this->index()] += array('size' => $size);
@@ -226,6 +224,7 @@ class Form {
       for($i = 0; $i < $n; $i++) {
         $this->_form[] = array('tag'    => 'optgroup',
                                'status' => 'open',
+                               'id'     => $this->id(),
                                'label'  => $optGroupNames[$i]);
         for($j = 0; $j < $optGroupLines[$i]; $j++) {
           $this->_form[] = array('tag'     => 'option',
@@ -256,6 +255,7 @@ class Form {
   {
     $this->_form[] = array('tag'    => 'textarea',
                            'status' => 'open',
+                           'id'     => $this->id(),
                            'name'   => $name,
                            'cols'   => $cols,
                            'rows'   => $rows);
@@ -270,6 +270,7 @@ class Form {
   {
     $this->_form[] = array('tag'     => 'button',
                            'status'  => 'open',
+                           'id'      => $this->id(),
                            'type'    => $type,
                            'name'    => $type,
                            'value'   => $value,
@@ -295,6 +296,7 @@ class Form {
     }
     $this->_form[] = array('tag'    => 'form',
                            'status' => 'close');
+    $this->replaceForValues();
   }
   //-------------------------------------------------------------------------------------------------------------------
   public function render()
@@ -369,7 +371,26 @@ class Form {
   //-------------------------------------------------------------------------------------------------------------------
   protected function id()
   {
-    return 'form-' . self::$_instances . '-' . count($this->_form);
+    return 'form-' . $this->getInstanceCounter() . '-' . count($this->_form);
+  }
+  //-------------------------------------------------------------------------------------------------------------------
+  protected function replaceForValues()
+  {
+    $count = count($this->_form);
+    for($i = 0; $i < $count; $i++) {
+      if(isset($this->_form[$i]['for'])) {
+        if(isset($this->_form[$i - 1]['name']) &&
+           isset($this->_form[$i - 1]['id']) &&
+           $this->_form[$i - 1]['name'] == $this->_form[$i]['for']) {
+          $this->_form[$i]['for'] = $this->_form[$i - 1]['id'];
+        }
+        if(isset($this->_form[$i + 2]['name']) &&
+           isset($this->_form[$i + 2]['id']) &&
+           $this->_form[$i + 2]['name'] == $this->_form[$i]['for']) {
+          $this->_form[$i]['for'] = $this->_form[$i + 2]['id'];
+        }
+      } 
+    }
   }
   //-------------------------------------------------------------------------------------------------------------------
   public function __toString()

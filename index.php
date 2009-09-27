@@ -66,7 +66,7 @@ $form->fieldset(1);
 
 $form->fieldset(2);
 $form->legend("Lakcím adatok");
-$form->label("Megye[]", "Megye");
+$form->label("megye[]", "Megye");
 $form->select("megye[]", $options);
 $form->label("varos", "Város");
 $form->input("text", array("varos"));
@@ -108,7 +108,6 @@ $form->fieldset("Nagy keret");
 $form->render();
 //---------------------------------------------------------------------------------------------------------------------
 $form2 = new Form("index.php", "post", "multipart/form-data");
-
 $form2->fieldset("Kép");
 $form2->legend("Képfeltöltés");
 $form2->html('<p>Ha szeretne magáról képet feltölteni, itt megteheti:</p>');
