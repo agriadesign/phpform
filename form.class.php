@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.3 @ 2009.10.14 */
+/* version 0.1.4 @ 2009.10.28 */
 /******************************/
 
 class Form
@@ -199,7 +199,8 @@ class Form
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function select($name, array $options, array $optGroups = NULL, $size = NULL, $multiple = NULL)
+    public function select($name, array $options, $selected = NULL, array $optGroups = NULL,
+                           $size = NULL, $multiple = NULL, array $multipleSelected = NULL)
     {
         $this->_form[] = array('tag'    => 'select',
                                'status' => 'open',
@@ -227,6 +228,13 @@ class Form
                     $this->_form[] = array('tag'     => 'option',
                                            'status'  => 'open',
                                            'content' => $options[$offset]);
+                    if(isset($multiple) && isset($multipleSelected) &&
+                             in_array($options[$offset], $multipleSelected)) {
+                       $this->_form[$this->index()] += array('selected' => 'selected');
+                    }
+                    elseif(isset($selected) && $selected  == $options[$offset]) {
+                        $this->_form[$this->index()] += array('selected' => 'selected');
+                    }
                     $this->_form[] = array('tag'    => 'option',
                                            'status' => 'close');
                     $offset++;
@@ -240,6 +248,12 @@ class Form
                 $this->_form[] = array('tag'     => 'option',
                                        'status'  => 'open',
                                        'content' => $tmp);
+                if(isset($multiple) && isset($multipleSelected) && in_array($tmp, $multipleSelected)) {
+                    $this->_form[$this->index()] += array('selected' => 'selected');
+                }
+                elseif(isset($selected) && $selected  == $tmp) {
+                      $this->_form[$this->index()] += array('selected' => 'selected');
+                }
                 $this->_form[] = array('tag'    => 'option',
                                        'status' => 'close');
             }

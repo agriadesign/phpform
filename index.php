@@ -67,7 +67,7 @@ $form->fieldset(1);
 $form->fieldset(2);
 $form->legend("Lakcím adatok");
 $form->label("megye[]", "Megye");
-$form->select("megye[]", $options);
+$form->select("megye[]", $options, "Heves megye");
 $form->label("varos", "Város");
 $form->input("text", array("varos"));
 $form->label("utca", "Utca, házszám");
@@ -97,7 +97,7 @@ $form->fieldset(4);
 $form->fieldset(5);
 $form->legend("Menü");
 $form->html('<p>Kérjük, hogy az ebédhez válasszon levest, főételt és desszertet:</p>');
-$form->select("menu[]", $options2, $optgroups, 5, "multiple");
+$form->select("menu[]", $options2, "", $optgroups, 5, "multiple", array("Húsleves", "Rántott hús", "Somlói"));
 $form->fieldset(5);
 
 $form->input("submit", array("submit", "Regisztrál"));
