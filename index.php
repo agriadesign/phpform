@@ -97,7 +97,7 @@ $form->fieldset(4);
 $form->fieldset(5);
 $form->legend("Menü");
 $form->html('<p>Kérjük, hogy az ebédhez válasszon levest, főételt és desszertet:</p>');
-$form->select("menu[]", $options2, "", $optgroups, 5, "multiple", array("Húsleves", "Rántott hús", "Somlói"));
+$form->select("menu[]", $options2, array("Húsleves", "Rántott hús", "Somlói"), $optgroups, 5, "multiple");
 $form->fieldset(5);
 
 $form->input("submit", array("submit", "Regisztrál"));

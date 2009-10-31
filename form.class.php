@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.4 @ 2009.10.28 */
+/* version 0.1.5 @ 2009.10.31 */
 /******************************/
 
 class Form
@@ -199,9 +199,12 @@ class Form
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function select($name, array $options, $selected = NULL, array $optGroups = NULL,
-                           $size = NULL, $multiple = NULL, array $multipleSelected = NULL)
+    public function select($name, array $options, $selected = NULL,
+                           array $optGroups = NULL, $size = NULL, $multiple = NULL)
     {
+        if(!isset($multiple) && is_array($selected)) {
+            $selected = $selected[0];
+        }
         $this->_form[] = array('tag'    => 'select',
                                'status' => 'open',
                                'id'     => $this->id(),
@@ -228,12 +231,8 @@ class Form
                     $this->_form[] = array('tag'     => 'option',
                                            'status'  => 'open',
                                            'content' => $options[$offset]);
-                    if(isset($multiple) && isset($multipleSelected) &&
-                             in_array($options[$offset], $multipleSelected)) {
-                       $this->_form[$this->index()] += array('selected' => 'selected');
-                    }
-                    elseif(isset($selected) && $selected  == $options[$offset]) {
-                        $this->_form[$this->index()] += array('selected' => 'selected');
+                    if(isset($selected)) {
+                        $this->selectedMarker($options[$offset], $selected, $multiple);
                     }
                     $this->_form[] = array('tag'    => 'option',
                                            'status' => 'close');
@@ -248,11 +247,8 @@ class Form
                 $this->_form[] = array('tag'     => 'option',
                                        'status'  => 'open',
                                        'content' => $tmp);
-                if(isset($multiple) && isset($multipleSelected) && in_array($tmp, $multipleSelected)) {
-                    $this->_form[$this->index()] += array('selected' => 'selected');
-                }
-                elseif(isset($selected) && $selected  == $tmp) {
-                      $this->_form[$this->index()] += array('selected' => 'selected');
+                if(isset($selected)) {
+                    $this->selectedMarker($tmp, $selected, $multiple);
                 }
                 $this->_form[] = array('tag'    => 'option',
                                        'status' => 'close');
@@ -404,6 +400,20 @@ class Form
                 }
             } 
         }
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    protected function selectedMarker($option, $selected, $multiple = NULL)
+    {
+        if(isset($multiple) && is_array($selected)) {
+            if(in_array($option, $selected)) {
+                $this->_form[$this->index()] += array('selected' => 'selected');
+            }
+        }
+        else {
+            if($selected == $option) {
+                $this->_form[$this->index()] += array('selected' => 'selected');
+            }
+        }    
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function __toString()
