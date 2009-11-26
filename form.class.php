@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.5 @ 2009.10.31 */
+/* version 0.1.6 @ 2009.11.26 */
 /******************************/
 
 class Form
@@ -10,15 +10,18 @@ class Form
     protected $_action;
     protected $_method;
     protected $_enctype;
-    protected $_fieldsetId = array();
+    protected $_XHTML;
     protected $_form = array();
+    protected $_fieldsetId = array();
     protected static $_instanceCounter = 0;
     //-----------------------------------------------------------------------------------------------------------------
     public function setAction($value)
     {
-        $extension = explode(".", strtolower($value));
-        if($extension[1] != "php") {
-            throw new Exception("<strong>{$value}</strong> is not a valid value for the 'action' attribute");
+        if(!empty($value)) {
+            $extension = explode(".", $value, 10);
+            if(array_pop($extension) != "php") {
+                throw new Exception("<strong>{$value}</strong> is not a valid value for the 'action' attribute");
+            }
         }
         $this->_action = $value;
     }
@@ -30,11 +33,14 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function setMethod($value)
     {
+        if($value == 1) {
+            $value = "post";
+        }
         $value = strtolower($value);
         if($value != "get" && $value != "post") {
             throw new Exception("<strong>{$value}</strong> is not a valid value for the 'method' attribute");
         }
-        $this->_method = $value;
+        $this->_method = $value;        
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function getMethod()
@@ -44,6 +50,12 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function setEnctype($value)
     {
+        if($value == 1) {
+            $value = "multipart/form-data";
+        }
+        if($value == 2) {
+            $value = "text/plain";
+        }
         $value = strtolower($value);
         if($value != "text/plain" &&
            $value != "multipart/form-data" &&
@@ -58,6 +70,19 @@ class Form
         return $this->_enctype;
     }
     //-----------------------------------------------------------------------------------------------------------------
+    public function setXHTML($value)
+    {
+        if (!is_bool($value)) {
+            throw new Exception("<strong>{$value}</strong> is not a valid value for the 'XHTML' attribute");
+        }
+        $this->_XHTML =  $value;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function getXHTML()
+    {
+        return $this->_XHTML;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
     protected function setInstanceCounter($value)
     {
         self::$_instanceCounter = $value;
@@ -68,15 +93,27 @@ class Form
         return self::$_instanceCounter;
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function __construct($action, $method = NULL, $enctype = NULL)
+    public function __construct($action = NULL, $method = NULL, $enctype = NULL)
     {
-        $this->setAction($action);
-        if(isset($method)) {
+        if(empty($action)) {
+            $this->setAction("");
+        }
+        else {
+            $this->setAction($action);
+        }
+        if(empty($method)) {
+            $this->setMethod("get");
+        }
+        else {
             $this->setMethod($method);
         }
-        if(isset($enctype)) {
+        if(empty($enctype)) {
+            $this->setEnctype("application/x-www-form-urlencoded");
+        }
+        else {
             $this->setEnctype($enctype);
         }
+        $this->setXHTML(FALSE);
         $this->setInstanceCounter($this->getInstanceCounter() + 1);
         $this->open();
     }
@@ -88,17 +125,20 @@ class Form
                                'id'     => $this->id(),
                                'action' => $this->getAction());
         $method = $this->getMethod(); 
-        if(isset($method)) {
+        if($method != "get") {
             $this->_form[$this->index()] += array('method' => $method);
         }
         $enctype = $this->getEnctype();
-        if(isset($enctype)) {
+        if($enctype != "application/x-www-form-urlencoded") {
             $this->_form[$this->index()] += array('enctype' => $enctype);
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function fieldset($id)
     {
+        if(empty($id)) {
+            throw new Exception("The fieldset method requires a proper <strong>id</strong> parameter");
+        }
         if(in_array($id, $this->_fieldsetId)) {
             $this->_form[] = array('tag'        => 'fieldset',
                                    'status'     => 'close',
@@ -111,10 +151,16 @@ class Form
                                    'status'     => 'open',
                                    'fieldsetid' => $id);
             $this->_fieldsetId[] = $id;
+            if(!$this->getXHTML()) {
+                $this->legend($id);
+            }
+            elseif (is_string($id)) {
+                $this->legend($id);
+            }
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function legend($title)
+    protected function legend($title)
     {
         $this->_form[] = array('tag'     => 'legend',
                                'status'  => 'open',
@@ -293,14 +339,6 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     protected function close()
     {
-        $n = count($this->_fieldsetId);
-        while($n > 0) {
-            $id = array_pop($this->_fieldsetId);
-            $this->_form[] = array('tag'        => 'fieldset',
-                                   'status'     => 'close',
-                                   'fieldsetid' => $id);
-            $n--;
-        }
         $this->_form[] = array('tag'    => 'form',
                                'status' => 'close');
         $this->replaceForValues();
@@ -418,7 +456,7 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function __toString()
     {
-        return "<pre>\n" . print_r($this->_form, TRUE) . "</pre>\n";
+        return print_r($this->_form, TRUE);
     }
     //-----------------------------------------------------------------------------------------------------------------
 }

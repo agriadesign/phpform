@@ -45,11 +45,9 @@ $optgroups = array("Leves" => 3, "Főétel" => 3, "Desszert" => 3);
 //---------------------------------------------------------------------------------------------------------------------
 $form = new Form("index.php", "post");
 
-$form->fieldset("Nagy keret");
-$form->legend("Regisztrációs űrlap");
+$form->fieldset("Regisztrációs űrlap");
 
-$form->fieldset(1);
-$form->legend("Személyes adatok");
+$form->fieldset("Személyes adatok");
 $form->label("nev", "Név");
 $form->input("text", array("nev"));
 $form->label("email", "E-mail cím");
@@ -62,20 +60,18 @@ $form->label("nem", "Férfi");
 $form->input("radio", array("nem", "nő", "checked"));
 $form->label("nem", "Nő");
 $form->input("hidden", array("regid", "12345"));
-$form->fieldset(1);
+$form->fieldset("Személyes adatok");
 
-$form->fieldset(2);
-$form->legend("Lakcím adatok");
+$form->fieldset("Lakcím adatok");
 $form->label("megye[]", "Megye");
 $form->select("megye[]", $options, "Heves megye");
 $form->label("varos", "Város");
 $form->input("text", array("varos"));
 $form->label("utca", "Utca, házszám");
 $form->input("text", array("utca"));
-$form->fieldset(2);
+$form->fieldset("Lakcím adatok");
 
-$form->fieldset(3);
-$form->legend("Érdeklődési területek");
+$form->fieldset("Érdeklődési területek");
 $form->input("checkbox", array("erdeklodes1", "informatika", "checked"));
 $form->label("erdeklodes1", "Informatika");
 $form->input("checkbox", array("erdeklodes2", "utazás"));
@@ -86,33 +82,31 @@ $form->input("checkbox", array("erdeklodes4", "sport"));
 $form->label("erdeklodes4", "Sport");
 $form->input("checkbox", array("erdeklodes5", "divat"));
 $form->label("erdeklodes5", "Divat");
-$form->fieldset(3);
+$form->fieldset("Érdeklődési területek");
 
-$form->fieldset(4);
-$form->legend("Üzenet");
+$form->fieldset("Üzenet");
 $form->html('<p>Ha szeretne nekümk üzenetet küldeni, akkor itt megteheti:</p>');
 $form->textarea(50, 10, "velemeny", "Ide írhatja az üzenetét...");
-$form->fieldset(4);
+$form->fieldset("Üzenet");
 
-$form->fieldset(5);
-$form->legend("Menü");
+$form->fieldset("Menü");
 $form->html('<p>Kérjük, hogy az ebédhez válasszon levest, főételt és desszertet:</p>');
 $form->select("menu[]", $options2, array("Húsleves", "Rántott hús", "Somlói"), $optgroups, 5, "multiple");
-$form->fieldset(5);
+$form->fieldset("Menü");
 
 $form->input("submit", array("submit", "Regisztrál"));
 $form->input("reset", array("reset", "Töröl"));
 
-$form->fieldset("Nagy keret");
+$form->fieldset("Regisztrációs űrlap");
 
 $form->render();
 //---------------------------------------------------------------------------------------------------------------------
 $form2 = new Form("index.php", "post", "multipart/form-data");
-$form2->fieldset("Kép");
-$form2->legend("Képfeltöltés");
+$form2->fieldset("Képfeltöltés");
 $form2->html('<p>Ha szeretne magáról képet feltölteni, itt megteheti:</p>');
 $form2->input("file", array("file", "File"));
 $form2->button("Feltölt", "submit");
+$form2->fieldset("Képfeltöltés");
 
 $form2->render();
 //---------------------------------------------------------------------------------------------------------------------
