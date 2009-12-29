@@ -60,7 +60,7 @@ $form->label("nem", "Férfi");
 $form->input("radio", array("nem", "nő", "checked"));
 $form->label("nem", "Nő");
 $form->input("hidden", array("regid", "12345"));
-$form->fieldset("Személyes adatok");
+$form->fieldset();
 
 $form->fieldset("Lakcím adatok");
 $form->label("megye[]", "Megye");
@@ -69,7 +69,7 @@ $form->label("varos", "Város");
 $form->input("text", array("varos"));
 $form->label("utca", "Utca, házszám");
 $form->input("text", array("utca"));
-$form->fieldset("Lakcím adatok");
+$form->fieldset();
 
 $form->fieldset("Érdeklődési területek");
 $form->input("checkbox", array("erdeklodes1", "informatika", "checked"));
@@ -82,22 +82,24 @@ $form->input("checkbox", array("erdeklodes4", "sport"));
 $form->label("erdeklodes4", "Sport");
 $form->input("checkbox", array("erdeklodes5", "divat"));
 $form->label("erdeklodes5", "Divat");
-$form->fieldset("Érdeklődési területek");
+$form->fieldset();
 
 $form->fieldset("Üzenet");
 $form->html('<p>Ha szeretne nekümk üzenetet küldeni, akkor itt megteheti:</p>');
 $form->textarea(50, 10, "velemeny", "Ide írhatja az üzenetét...");
-$form->fieldset("Üzenet");
+$form->fieldset();
 
 $form->fieldset("Menü");
 $form->html('<p>Kérjük, hogy az ebédhez válasszon levest, főételt és desszertet:</p>');
 $form->select("menu[]", $options2, array("Húsleves", "Rántott hús", "Somlói"), $optgroups, 5, "multiple");
-$form->fieldset("Menü");
+$form->fieldset();
 
 $form->input("submit", array("submit", "Regisztrál"));
 $form->input("reset", array("reset", "Töröl"));
 
-$form->fieldset("Regisztrációs űrlap");
+$form->fieldset();
+
+//$form->setTestMode(TRUE);
 
 $form->render();
 //---------------------------------------------------------------------------------------------------------------------
@@ -106,7 +108,7 @@ $form2->fieldset("Képfeltöltés");
 $form2->html('<p>Ha szeretne magáról képet feltölteni, itt megteheti:</p>');
 $form2->input("file", array("file", "File"));
 $form2->button("Feltölt", "submit");
-$form2->fieldset("Képfeltöltés");
+$form2->fieldset();
 
 $form2->render();
 //---------------------------------------------------------------------------------------------------------------------
@@ -115,5 +117,13 @@ $form2->render();
 //---------------------------------------------------------------------------------------------------------------------
 
 ?>
+<p>
+    <a href="http://validator.w3.org/check?uri=referer">
+        <img src="http://www.w3.org/Icons/valid-html401-blue" alt="Valid HTML 4.01 Strict" height="31" width="88">
+    </a>
+    <a href="http://jigsaw.w3.org/css-validator/check/referer">
+        <img src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88">
+    </a>
+</p>
 </body>
 </html>

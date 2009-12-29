@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.6 @ 2009.11.26 */
+/* version 0.1.7 @ 2009.12.29 */
 /******************************/
 
 class Form
@@ -11,6 +11,7 @@ class Form
     protected $_method;
     protected $_enctype;
     protected $_XHTML;
+    protected $_testMode;
     protected $_form = array();
     protected $_fieldsetId = array();
     protected static $_instanceCounter = 0;
@@ -83,6 +84,19 @@ class Form
         return $this->_XHTML;
     }
     //-----------------------------------------------------------------------------------------------------------------
+    public function setTestMode($value)
+    {
+        if (!is_bool($value)) {
+            throw new Exception("<strong>{$value}</strong> is not a valid value for the 'testMode' attribute");
+        }
+        $this->_testMode =  $value;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function getTestMode()
+    {
+        return $this->_testMode;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
     protected function setInstanceCounter($value)
     {
         self::$_instanceCounter = $value;
@@ -114,6 +128,7 @@ class Form
             $this->setEnctype($enctype);
         }
         $this->setXHTML(FALSE);
+        $this->setTestMode(FALSE);
         $this->setInstanceCounter($this->getInstanceCounter() + 1);
         $this->open();
     }
@@ -134,17 +149,13 @@ class Form
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function fieldset($id)
+    public function fieldset($id = NULL)
     {
-        if(empty($id)) {
-            throw new Exception("The fieldset method requires a proper <strong>id</strong> parameter");
-        }
-        if(in_array($id, $this->_fieldsetId)) {
+        if(!isset($id)) {
+            $id = array_pop($this->_fieldsetId);
             $this->_form[] = array('tag'        => 'fieldset',
                                    'status'     => 'close',
                                    'fieldsetid' => $id);
-            $index = array_search($id, $this->_fieldsetId);
-            array_splice($this->_fieldsetId, $index, 1);
         }
         else {
             $this->_form[] = array('tag'        => 'fieldset',
@@ -154,8 +165,10 @@ class Form
             if(!$this->getXHTML()) {
                 $this->legend($id);
             }
-            elseif (is_string($id)) {
-                $this->legend($id);
+            else {
+                if(!empty($id) && is_string($id)) {
+                    $this->legend($id);
+                }
             }
         }
     }
@@ -346,6 +359,14 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function render()
     {
+        if($this->getTestMode()) {
+            $lt = "&lt;";
+            $gt = "&gt;";
+        }
+        else {
+            $lt = "<";
+            $gt = ">";
+        }
         $this->close();
         $tabs = array("",
                       "\t",
@@ -355,7 +376,9 @@ class Form
                       "\t\t\t\t\t",
                       "\t\t\t\t\t\t",
                       "\t\t\t\t\t\t\t",
-                      "\t\t\t\t\t\t\t\t");
+                      "\t\t\t\t\t\t\t\t",
+                      "\t\t\t\t\t\t\t\t\t",
+                      "\t\t\t\t\t\t\t\t\t\t");
         $i = 0;
         $j = 0;
         $tagName = "";
@@ -375,11 +398,11 @@ class Form
                         else {
                             $j = $i;
                         }
-                        echo "{$tabs[$i-$j]}</{$tagName}";
+                        echo "{$tabs[$i-$j]}{$lt}/{$tagName}";
                         $j = 0;
                     }
                     else {
-                        echo "{$tabs[$i]}<{$tagName}";
+                        echo "{$tabs[$i]}{$lt}{$tagName}";
                         if($tagName == "form"   || $tagName == "fieldset" ||
                            $tagName == "select" || $tagName == "optgroup") {
                             $i = count($tabs) -1 > $i ? $i + 1 : count($tabs) -1;
@@ -401,10 +424,10 @@ class Form
             }
             if($key != "html") {
                 if(empty($contentValue)) {
-                    echo ">\n";
+                    echo "{$gt}\n";
                 }
                 else {
-                    echo ">{$contentValue}";
+                    echo "{$gt}{$contentValue}";
                 }
                 $contentValue = "";
             }
