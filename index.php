@@ -1,9 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-  "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" href="style.css" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="style.css" type="text/css" />
 <title>&lt;?php form&gt;</title>
 </head>
 <body>
@@ -43,7 +42,7 @@ $options2 = array("Húsleves",
                   
 $optgroups = array("Leves" => 3, "Főétel" => 3, "Desszert" => 3);
 //---------------------------------------------------------------------------------------------------------------------
-$form = new Form("index.php", "post");
+$form = new Form("index.php", "post", 0, "xhtml");
 
 $form->fieldset("Regisztrációs űrlap");
 
@@ -103,7 +102,7 @@ $form->fieldset();
 
 $form->render();
 //---------------------------------------------------------------------------------------------------------------------
-$form2 = new Form("index.php", "post", "multipart/form-data");
+$form2 = new Form("index.php", "post", "multipart/form-data", 1);
 $form2->fieldset("Képfeltöltés");
 $form2->html('<p>Ha szeretne magáról képet feltölteni, itt megteheti:</p>');
 $form2->input("file", array("file", "File"));
@@ -119,10 +118,10 @@ $form2->render();
 ?>
 <p>
     <a href="http://validator.w3.org/check?uri=referer">
-        <img src="http://www.w3.org/Icons/valid-html401-blue" alt="Valid HTML 4.01 Strict" height="31" width="88">
+        <img src="http://www.w3.org/Icons/valid-xhtml10-blue" alt="Valid XHTML 1.0 Strict" height="31" width="88" />
     </a>
     <a href="http://jigsaw.w3.org/css-validator/check/referer">
-        <img src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88">
+        <img src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" height="31" width="88" />
     </a>
 </p>
 </body>

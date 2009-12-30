@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.7 @ 2009.12.29 */
+/* version 0.1.8 @ 2009.12.30 */
 /******************************/
 
 class Form
@@ -73,6 +73,12 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function setXHTML($value)
     {
+        if(strtolower($value) == "xhtml" || $value == 1) {
+            $value = TRUE;
+        }
+        if(strtolower($value) == "html") {
+            $value = FALSE;
+        }
         if (!is_bool($value)) {
             throw new Exception("<strong>{$value}</strong> is not a valid value for the 'XHTML' attribute");
         }
@@ -107,7 +113,7 @@ class Form
         return self::$_instanceCounter;
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function __construct($action = NULL, $method = NULL, $enctype = NULL)
+    public function __construct($action = NULL, $method = NULL, $enctype = NULL, $XHTML = NULL)
     {
         if(empty($action)) {
             $this->setAction("");
@@ -127,7 +133,12 @@ class Form
         else {
             $this->setEnctype($enctype);
         }
-        $this->setXHTML(FALSE);
+        if(empty($XHTML)) {
+            $this->setXHTML(FALSE);
+        }
+        else {
+            $this->setXHTML($XHTML);
+        }
         $this->setTestMode(FALSE);
         $this->setInstanceCounter($this->getInstanceCounter() + 1);
         $this->open();
@@ -424,6 +435,9 @@ class Form
             }
             if($key != "html") {
                 if(empty($contentValue)) {
+                    if($tagName == "input") {
+                        echo " /";
+                    }
                     echo "{$gt}\n";
                 }
                 else {
