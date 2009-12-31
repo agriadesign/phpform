@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.8 @ 2009.12.30 */
+/* version 0.1.9 @ 2009.12.31 */
 /******************************/
 
 class Form
@@ -41,7 +41,7 @@ class Form
         if($value != "get" && $value != "post") {
             throw new Exception("<strong>{$value}</strong> is not a valid value for the 'method' attribute");
         }
-        $this->_method = $value;        
+        $this->_method = $value;
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function getMethod()
@@ -92,6 +92,12 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function setTestMode($value)
     {
+        if($value == 0) {
+            $value = FALSE;
+        }
+        if($value == 1) {
+            $value = TRUE;
+        }
         if (!is_bool($value)) {
             throw new Exception("<strong>{$value}</strong> is not a valid value for the 'testMode' attribute");
         }
@@ -150,7 +156,7 @@ class Form
                                'status' => 'open',
                                'id'     => $this->id(),
                                'action' => $this->getAction());
-        $method = $this->getMethod(); 
+        $method = $this->getMethod();
         if($method != "get") {
             $this->_form[$this->index()] += array('method' => $method);
         }
@@ -264,7 +270,9 @@ class Form
         if(!empty($attributeNames)) {
             $attributes = array_combine($attributeNames, $attributeValues);
             foreach($attributes as $key => $value) {
-                if(!empty($value)) $this->_form[$this->index()] += array($key => $value);
+                if(!empty($value)) {
+                    $this->_form[$this->index()] += array($key => $value);
+                }
             }
         }
     }
@@ -392,6 +400,7 @@ class Form
                       "\t\t\t\t\t\t\t\t\t\t");
         $i = 0;
         $j = 0;
+        $k = 0;
         $tagName = "";
         $contentValue = "";
         foreach($this->_form as $tagArray) {
@@ -434,17 +443,26 @@ class Form
                 }
             }
             if($key != "html") {
-                if(empty($contentValue)) {
-                    if($tagName == "input") {
-                        echo " /";
+                if($contentValue == "") {
+                    if($tagArray['status'] == "empty") {
+                        echo " /{$gt}\n";
                     }
-                    echo "{$gt}\n";
+                    else {
+                        if($this->_form[$k]['tag'] == $this->_form[$k + 1]['tag'] &&
+                           $this->_form[$k]['status'] == "open" && $this->_form[$k + 1]['status'] == "close") {
+                            echo "{$gt}";
+                        }
+                        else {
+                            echo "{$gt}\n";
+                        }
+                    }
                 }
                 else {
                     echo "{$gt}{$contentValue}";
                 }
                 $contentValue = "";
             }
+            $k++;
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
