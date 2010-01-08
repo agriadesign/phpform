@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.1.9 @ 2009.12.31 */
+/* version 0.2.0 @ 2010.01.08 */
 /******************************/
 
 class Form
@@ -11,6 +11,8 @@ class Form
     protected $_method;
     protected $_enctype;
     protected $_XHTML;
+    protected $_validation;
+    protected $_validator;
     protected $_testMode;
     protected $_form = array();
     protected $_fieldsetId = array();
@@ -90,6 +92,19 @@ class Form
         return $this->_XHTML;
     }
     //-----------------------------------------------------------------------------------------------------------------
+    public function setValidation($value)
+    {
+    if (!is_bool($value)) {
+            throw new Exception("<strong>{$value}</strong> is not a valid value for the 'validation' attribute");
+        }
+        $this->_validation =  $value;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function getValidation()
+    {
+        return $this->_validation;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
     public function setTestMode($value)
     {
         if($value == 0) {
@@ -119,7 +134,7 @@ class Form
         return self::$_instanceCounter;
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function __construct($action = NULL, $method = NULL, $enctype = NULL, $XHTML = NULL)
+    public function __construct($action = NULL, $method = NULL, $enctype = NULL, $XHTML = NULL, $validation = NULL)
     {
         if(empty($action)) {
             $this->setAction("");
@@ -145,8 +160,15 @@ class Form
         else {
             $this->setXHTML($XHTML);
         }
-        $this->setTestMode(FALSE);
         $this->setInstanceCounter($this->getInstanceCounter() + 1);
+        if(empty($validation)) {
+            $this->setValidation(FALSE);
+        }
+        else {
+            $this->setValidation($validation);
+        }
+        $this->_validator = new Validator($this->getInstanceCounter());
+        $this->setTestMode(FALSE);
         $this->open();
     }
     //-----------------------------------------------------------------------------------------------------------------
@@ -163,6 +185,10 @@ class Form
         $enctype = $this->getEnctype();
         if($enctype != "application/x-www-form-urlencoded") {
             $this->_form[$this->index()] += array('enctype' => $enctype);
+        }
+        if($this->getValidation()) {
+            $this->_form[$this->index()] +=
+                array('onsubmit' => 'return validator' . $this->getInstanceCounter() . '();');
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
@@ -464,6 +490,15 @@ class Form
             }
             $k++;
         }
+        if($this->getValidation()) {
+            $this->_validator->render();
+        }
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function validate($type)
+    {
+        $id = 'form-' . $this->getInstanceCounter() . '-' . $this->index();
+        $this->_validator->validate($id, $type);
     }
     //-----------------------------------------------------------------------------------------------------------------
     protected function index()

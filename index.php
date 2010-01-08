@@ -1,14 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<title>&lt;?php form&gt;</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="style.css" type="text/css" />
-<title>&lt;?php form&gt;</title>
+<script type="text/javascript" src="class.validator.js"></script>
 </head>
 <body>
 <?php
 //---------------------------------------------------------------------------------------------------------------------
-require_once("form.class.php");
+require_once("class.form.php");
+require_once("class.validator.php");
 
 $options = array("Bács-Kiskun megye",
                  "Baranya megye",
@@ -42,15 +44,17 @@ $options2 = array("Húsleves",
                   
 $optgroups = array("Leves" => 3, "Főétel" => 3, "Desszert" => 3);
 //---------------------------------------------------------------------------------------------------------------------
-$form = new Form("index.php", "post", 0, "xhtml");
+$form = new Form("index.php", "post", 0, "xhtml", true);
 
 $form->fieldset("Regisztrációs űrlap");
 
 $form->fieldset("Személyes adatok");
 $form->label("nev", "Név");
 $form->input("text", array("nev"));
+$form->validate("n");
 $form->label("email", "E-mail cím");
 $form->input("text", array("email"));
+$form->validate("m");
 $form->label("jelszo", "Jelszó");
 $form->input("password", array("jelszo"));
 $form->html("<p>Neme</p>");
