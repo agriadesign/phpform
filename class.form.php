@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.2.0 @ 2010.01.08 */
+/* version 0.2.1 @ 2010.02.10 */
 /******************************/
 
 class Form
@@ -94,10 +94,16 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function setValidation($value)
     {
-    if (!is_bool($value)) {
-            throw new Exception("<strong>{$value}</strong> is not a valid value for the 'validation' attribute");
+        if($value == 0) {
+            $value = FALSE;
         }
-        $this->_validation =  $value;
+        if($value == 1) {
+            $value = TRUE;
+        }
+        if (!is_bool($value)) {
+                throw new Exception("<strong>{$value}</strong> is not a valid value for the 'validation' attribute");
+            }
+            $this->_validation =  $value;
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function getValidation()
@@ -225,7 +231,7 @@ class Form
                                'status' => 'close');
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function label($name, $content)
+    public function label($name, $content = NULL)
     {
         $this->_form[] = array('tag'     => 'label',
                                'status'  => 'open',

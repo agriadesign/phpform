@@ -89,7 +89,7 @@ $form->fieldset();
 
 $form->fieldset("Üzenet");
 $form->html('<p>Ha szeretne nekümk üzenetet küldeni, akkor itt megteheti:</p>');
-$form->textarea(50, 10, "velemeny", "Ide írhatja az üzenetét...");
+$form->textarea(50, 10, "velemeny", "Ide írhat...");
 $form->fieldset();
 
 $form->fieldset("Menü");
