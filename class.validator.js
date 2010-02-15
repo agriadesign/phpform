@@ -1,6 +1,6 @@
 
 /******************************/
-/* version 0.2.1 @ 2010.02.10 */
+/* version 0.2.2 @ 2010.02.15 */
 /******************************/
 
 function Validator()
@@ -30,22 +30,30 @@ function Validator()
             case "a":
             case "alpha":
                 _errorType = "csak betűket tartalmazhat";
-                return /^[a-záéíóöőúű\s]*$/ig.test(field);
+                var alpha = /^[a-záéíóöőúű\s]*$/ig;
+                var a = new RegExp(alpha);
+                return a.test(field);
             break;
             case "d":
             case "date":
                 _errorType = "nem valós dátum";
-                return /(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])/g.test(field);
+                var date = /(19|20)[0-9]{2}[-/.](0[1-9]|1[012])[-/.](0[1-9]|[12][0-9]|3[01])/g;
+                var d = new RegExp(date);
+                return d.test(field);
             break;
             case "m":
             case "email":
                 _errorType = "nem valós email cím";
-                return /^[a-z0-9._%+-]+@(?:[a-z0-9-]+\.)+[a-z]{2,4}/ig.test(field);
+                var email = /^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$/ig;
+                var m = new RegExp(email);
+                return m.test(field);
             break;
             case "n":
             case "name":
                 _errorType = "csak betűket, kötőjelet és pontot tartalmazhat";
-                return /^[-.a-záéíóöőúüű\s]*$/ig.test(field);
+                var name = /^[-.a-záéíóöőúüű\s]*$/ig;
+                var n = new RegExp(name);
+                return n.test(field);
             break;
         }
         return false;
