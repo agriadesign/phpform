@@ -61,6 +61,7 @@ $form->label("jelszo2", "Jelszó még egyszer");
 $form->input("password", array("jelszo2"));
 $form->label("szulido", "Születési idő");
 $form->input("text", array("szulido"));
+$form->mask("d");
 $form->validate("d");
 $form->html("<p>Neme</p>");
 $form->input("radio", array("nem", "férfi"));

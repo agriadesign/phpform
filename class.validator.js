@@ -1,6 +1,6 @@
 
 /******************************/
-/* version 0.2.2 @ 2010.02.15 */
+/* version 0.2.3 @ 2010.02.17 */
 /******************************/
 
 function Validator()
@@ -9,9 +9,12 @@ function Validator()
     var _elements = Array();
     var _errors = Array();
     var _errorType = "hibás";
+    var _patterns = Array();
+    var _keyboards = /[\x08\x0D\x23\x24\x25\x26\x27\x28\x2D\x2E]/;
     //-----------------------------------------------------------------------------------------------------------------
     this.validate = validate;
     this.validateForm = validateForm;
+    this.mask = mask;
     //-----------------------------------------------------------------------------------------------------------------
     function validate(id, type)
     {
@@ -102,6 +105,62 @@ function Validator()
             errorMessage += " - " +  _errors[i] + "\n";
         }
         alert(errorMessage);
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    function mask(id, mask)
+    {
+        var pattern;
+        attachEvent(id);
+        switch(mask)
+        {
+            case "d":
+                pattern = /\d/;
+            break;
+        }
+        _patterns[id] = pattern;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    function attachEvent(id)
+    {
+        var obj = document.getElementById(id);
+        if(document.attachEvent) {
+            obj.attachEvent("onkeypress", inputMask);
+        }
+        else if(document.addEventListener) {
+            obj.addEventListener("keydown", inputMask, true);
+        }
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    function inputMask(e)
+    {
+        var code, character, target;
+        if(!e) {
+            var e = window.event;
+        }
+        if(e.keyCode) {
+            code = e.keyCode;
+        }
+        else if(e.which) {
+            code = e.which;
+        }
+        character = String.fromCharCode(code);
+        if(e.target) {
+            target = e.target;
+        }
+        else if(e.srcElement) {
+            target = e.srcElement;
+        }
+        if(target.nodeType == 3) {
+            target = target.parentNode;
+        }
+        if(!_patterns[target.id].test(character) && !_keyboards.test(character)) {
+            if(e.preventDefault) {
+                e.preventDefault();
+            }
+            else {
+                e.returnValue = false;
+            }
+        }
     }
     //-----------------------------------------------------------------------------------------------------------------
 }

@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.2.2 @ 2010.02.15 */
+/* version 0.2.3 @ 2010.02.17 */
 /******************************/
 
 class Form
@@ -191,10 +191,6 @@ class Form
         $enctype = $this->getEnctype();
         if($enctype != "application/x-www-form-urlencoded") {
             $this->_form[$this->index()] += array('enctype' => $enctype);
-        }
-        if($this->getValidation()) {
-            $this->_form[$this->index()] +=
-                array('onsubmit' => 'return validator' . $this->getInstanceCounter() . '();');
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
@@ -499,6 +495,12 @@ class Form
         if($this->getValidation()) {
             $this->_validator->render();
         }
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function mask($type)
+    {
+        $id = 'form-' . $this->getInstanceCounter() . '-' . $this->index();
+        $this->_validator->mask($id, $type);
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function validate($type)
