@@ -51,6 +51,7 @@ $form->fieldset("Regisztrációs űrlap");
 $form->fieldset("Személyes adatok");
 $form->label("nev", "Név");
 $form->input("text", array("nev"));
+$form->mask("n");
 $form->validate("n");
 $form->label("email", "E-mail cím");
 $form->input("text", array("email"));

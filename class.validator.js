@@ -1,6 +1,6 @@
 
 /******************************/
-/* version 0.2.3 @ 2010.02.17 */
+/* version 0.2.4 @ 2010.02.27 */
 /******************************/
 
 function Validator()
@@ -10,7 +10,6 @@ function Validator()
     var _errors = Array();
     var _errorType = "hibás";
     var _patterns = Array();
-    var _keyboards = /[\x08\x0D\x23\x24\x25\x26\x27\x28\x2D\x2E]/;
     //-----------------------------------------------------------------------------------------------------------------
     this.validate = validate;
     this.validateForm = validateForm;
@@ -110,9 +109,12 @@ function Validator()
     function mask(id, mask)
     {
         var pattern;
-        attachEvent(id);
+        addEvent(id);
         switch(mask)
         {
+            case "n":
+                pattern = /[-.a-záéíóöőúüű\s]/i;
+            break;
             case "d":
                 pattern = /\d/;
             break;
@@ -120,44 +122,51 @@ function Validator()
         _patterns[id] = pattern;
     }
     //-----------------------------------------------------------------------------------------------------------------
-    function attachEvent(id)
+    function addEvent(id)
     {
         var obj = document.getElementById(id);
         if(document.attachEvent) {
+            // Internet Explorer, Opera
             obj.attachEvent("onkeypress", inputMask);
         }
         else if(document.addEventListener) {
-            obj.addEventListener("keydown", inputMask, true);
+            // Chrome, Firefox, Safari
+            obj.addEventListener("keypress", inputMask, true);
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
     function inputMask(e)
     {
-        var code, character, target;
-        if(!e) {
+        var code, allowedKey = false, character, target;
+        if (!e) {
             var e = window.event;
         }
-        if(e.keyCode) {
-            code = e.keyCode;
-        }
-        else if(e.which) {
-            code = e.which;
+        code = e.charCode || e.keyCode;
+        // handle backspace, ins, del, home, end and arrow keys in Firefox and Opera
+        if(e.keyCode != 0 && e.which == 0 && (e.charCode == 0 || typeof(e.charCode) == 'undefined') || code == 8) {
+                allowedKey = true;
         }
         character = String.fromCharCode(code);
+        // Get the target of the event
         if(e.target) {
+            // Chrome, Firefox, Opera, Safari
             target = e.target;
         }
         else if(e.srcElement) {
+            // Internet Explorer
             target = e.srcElement;
         }
         if(target.nodeType == 3) {
+            // defeat a Safari bug
             target = target.parentNode;
         }
-        if(!_patterns[target.id].test(character) && !_keyboards.test(character)) {
+        if(!_patterns[target.id].test(character) && !allowedKey) {
             if(e.preventDefault) {
+                // Chrome, Firefox, Opera, Safari
                 e.preventDefault();
             }
             else {
+                // Internet Explorer
                 e.returnValue = false;
             }
         }
