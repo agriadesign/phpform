@@ -7,6 +7,7 @@
 <script type="text/javascript" src="class.validator.js"></script>
 </head>
 <body>
+<p class="center small"><strong>version 0.2.5 @ 2010.03.09</strong></p>
 <?php
 //---------------------------------------------------------------------------------------------------------------------
 require_once("class.form.php");
@@ -62,7 +63,7 @@ $form->label("jelszo2", "Jelszó még egyszer");
 $form->input("password", array("jelszo2"));
 $form->label("szulido", "Születési idő");
 $form->input("text", array("szulido"));
-$form->mask("d");
+$form->mask("dddd-dd-dd");
 $form->validate("d");
 $form->html("<p>Neme</p>");
 $form->input("radio", array("nem", "férfi"));

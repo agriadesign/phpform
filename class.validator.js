@@ -1,6 +1,6 @@
 
 /******************************/
-/* version 0.2.4 @ 2010.02.27 */
+/* version 0.2.5 @ 2010.03.09 */
 /******************************/
 
 function Validator()
@@ -10,6 +10,7 @@ function Validator()
     var _errors = Array();
     var _errorType = "hibás";
     var _patterns = Array();
+    var _formatMasks = Array();
     //-----------------------------------------------------------------------------------------------------------------
     this.validate = validate;
     this.validateForm = validateForm;
@@ -108,18 +109,29 @@ function Validator()
     //-----------------------------------------------------------------------------------------------------------------
     function mask(id, mask)
     {
-        var pattern;
         addEvent(id);
+        if(mask.length != 1) {
+            _formatMasks[id] = mask;
+            var types = mask.split(/\W/);
+            for(var i = 0; i < types.length; i++) {
+                if(/\w/.test(types[i])) {
+                    mask = types[i].substring(0, 1);
+                    break;
+                }
+            }
+        }
         switch(mask)
         {
             case "n":
-                pattern = /[-.a-záéíóöőúüű\s]/i;
+                _patterns[id] = /[-.a-záéíóöőúüű\s]/i;
             break;
             case "d":
-                pattern = /\d/;
+                _patterns[id] = /\d/;
+            break;
+            default:
+                _patterns[id] = /\w/;
             break;
         }
-        _patterns[id] = pattern;
     }
     //-----------------------------------------------------------------------------------------------------------------
     function addEvent(id)
@@ -135,6 +147,23 @@ function Validator()
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
+    function getTarget(e)
+    {
+        // Chrome, Firefox, Opera, Safari
+        if(e.target) {
+            return e.target;
+        }
+        // Internet Explorer
+        else if(e.srcElement) {
+            return e.srcElement;
+        }
+        // defeat a Safari bug
+        if(target.nodeType == 3) {
+            return target.parentNode;
+        }
+        return null;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
     function inputMask(e)
     {
         var code, allowedKey = false, character, target;
@@ -148,18 +177,7 @@ function Validator()
         }
         character = String.fromCharCode(code);
         // Get the target of the event
-        if(e.target) {
-            // Chrome, Firefox, Opera, Safari
-            target = e.target;
-        }
-        else if(e.srcElement) {
-            // Internet Explorer
-            target = e.srcElement;
-        }
-        if(target.nodeType == 3) {
-            // defeat a Safari bug
-            target = target.parentNode;
-        }
+        target = getTarget(e);
         if(!_patterns[target.id].test(character) && !allowedKey) {
             if(e.preventDefault) {
                 // Chrome, Firefox, Opera, Safari
@@ -169,6 +187,30 @@ function Validator()
                 // Internet Explorer
                 e.returnValue = false;
             }
+        }
+        if(typeof _formatMasks[target.id] !== "undefined") {
+            var field = document.getElementById(target.id);
+            var text = document.getElementById(target.id).value;
+            var pattern = _formatMasks[target.id];
+            var characters = pattern.split(/\W/);
+            var separators = Array();
+            var locations = Array();
+            var j = 0;
+            for(var i = 0; i < characters.length - 1; i++) {
+                locations[i] = characters[i].length + j;
+                j = locations[i] + 1;
+                separators[i] = pattern.substring(locations[i], locations[i] + 1);
+            }
+            for(var i = 0; i <= locations.length; i++) {
+                for(var j = 0; j <= text.length; j++) {
+                    if(j == locations[i]) {
+                        if(text.substring(j, j + 1) != separators[i] && e.keyCode != 8) {
+                            text = text.substring(0, j) + separators[i] + text.substring(j, text.length);
+                        }
+                    }
+                }
+            }
+            field.value = text;
         }
     }
     //-----------------------------------------------------------------------------------------------------------------

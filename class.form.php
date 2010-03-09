@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.2.4 @ 2010.02.27 */
+/* version 0.2.5 @ 2010.03.09 */
 /******************************/
 
 class Form
@@ -497,8 +497,15 @@ class Form
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function mask($type)
+    public function mask($type, $maxLength = NULL)
     {
+        $maskLength = strlen($type);
+        if($maskLength > 1) {
+            $maxLength = $maskLength;
+        }
+        if(!empty($maxLength)) {
+            $this->_form[$this->index()]["maxlength"] = $maxLength;
+        }
         $id = 'form-' . $this->getInstanceCounter() . '-' . $this->index();
         $this->_validator->mask($id, $type);
     }
