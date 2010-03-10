@@ -7,7 +7,7 @@
 <script type="text/javascript" src="class.validator.js"></script>
 </head>
 <body>
-<p class="center small"><strong>version 0.2.5 @ 2010.03.09</strong></p>
+<p class="center small"><strong>version 0.2.6 @ 2010.03.10</strong></p>
 <?php
 //---------------------------------------------------------------------------------------------------------------------
 require_once("class.form.php");
