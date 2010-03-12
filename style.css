@@ -1,17 +1,17 @@
 
 /******************************/
-/* version 0.2.7 @ 2010.03.11 */
+/* version 0.2.8 @ 2010.03.12 */
 /******************************/
 
 * {
-  padding: 0;
-  margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 body {
-  padding: 15px;
-  margin: 15px;
-  color: #555;
+    padding: 15px;
+    margin: 15px;
+    color: #555;
 }
 
 .center {
@@ -23,8 +23,8 @@ body {
 }
 
 p {
-  padding: 0;
-  margin: 20px 0;
+    padding: 0;
+    margin: 20px 0;
 }
 
 a img {
@@ -32,60 +32,60 @@ a img {
 }
 
 form {
-  padding: 0;
-  margin: 0 0 25px 0;
+    padding: 0;
+    margin: 0 0 25px 0;
 }
 
 fieldset {
-  border: 1px solid #bbb;
-  padding: 15px;
-  margin: 10px;
+    border: 1px solid #bbb;
+    padding: 15px;
+    margin: 10px;
 }
 
-fieldset fieldset{
-  border: 1px dashed #bbb;
+fieldset fieldset {
+    border: 1px dashed #bbb;
 }
 
 legend {
-  font-weight: bold;
-  padding: 0 5px;
+    font-weight: bold;
+    padding: 0 5px;
 }
 
 label {
-  padding: 0;
-  margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 input {
-  color: #555;
-  background-color: #fff;
-  border: 1px solid #999;
-  display: block;
-  padding: 2px;
-  margin: 10px;
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #999;
+    display: block;
+    padding: 2px;
+    margin: 10px;
 }
 
 textarea {
-  border: 1px solid #999;
+    border: 1px solid #999;
 }
 
 select {
-  padding: 0;
-  margin: 10px;
-  display: block;
+    padding: 0;
+    margin: 10px;
+    display: block;
 }
 
 input[type="submit"] {
-  background-color: #ddd;
+    background-color: #ddd;
 }
 
 input[type="radio"] {
-	border: none; /* IE */
-	display: inline;
+    border: none; /* IE */
+    display: inline;
 }
 
 input[type="hidden"] {
-  padding: 0;
-  margin: 0;
-	border: none; /* Firefox */
+    padding: 0;
+    margin: 0;
+    border: none; /* Firefox */
 }
