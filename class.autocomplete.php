@@ -1,7 +1,7 @@
 <?php
 
 /******************************/
-/* version 0.2.8 @ 2010.03.12 */
+/* version 0.2.9 @ 2010.03.13 */
 /******************************/
 
 require_once("config.autocomplete.php");
@@ -68,7 +68,7 @@ class autoComplete
         $keyword = $this->keywordFilter($keyword);
         if($keyword != "") {
             $keyword = $this->_mysqli->real_escape_string($keyword);
-            $query = "SELECT {$field} FROM {$table} WHERE {$field} REGEXP '^{$keyword}' ORDER BY {$field}";
+            $query = "SELECT {$field} FROM {$table} WHERE LOWER({$field}) REGEXP '^{$keyword}' ORDER BY {$field}";
             $result = $this->_mysqli->query($query);
             if($result->num_rows) {
                 while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
@@ -99,7 +99,8 @@ class autoComplete
         $keyword = $this->keywordFilter($keyword);
         if($keyword != "") {
             foreach ($array as $tmp) {
-                if(stripos($tmp, $keyword) !== FALSE && stripos($tmp, $keyword) == 0) {
+                if(mb_stripos($tmp, $keyword, null, "utf-8") !== FALSE &&
+                   mb_stripos($tmp, $keyword, null, "utf-8") == 0) {
                     $this->_response[] = $tmp;
                 }
             }

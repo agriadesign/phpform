@@ -5,13 +5,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="style.css" type="text/css" />
 <script type="text/javascript" src="class.validator.js"></script>
+<script type="text/javascript" src="class.autocomplete.js"></script>
 </head>
 <body>
-<p class="center small"><strong>version 0.2.8 @ 2010.03.12</strong></p>
+<p class="center small"><strong>version 0.2.9 @ 2010.03.13</strong></p>
 <?php
 //---------------------------------------------------------------------------------------------------------------------
 require_once("class.form.php");
 require_once("class.validator.php");
+require_once("class.autocomplete.php");
 
 $options = array("Bács-Kiskun megye",
                  "Baranya megye",
@@ -78,6 +80,7 @@ $form->label("megye[]", "Megye");
 $form->select("megye[]", $options, "Heves megye");
 $form->label("varos", "Város");
 $form->input("text", array("varos"));
+$form->html('<div id="varosok"></div>');
 $form->label("utca", "Utca, házszám");
 $form->input("text", array("utca"));
 $form->fieldset();
