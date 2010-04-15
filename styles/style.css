@@ -1,0 +1,197 @@
+
+/******************************/
+/* version 0.3.0 @ 2010.04.15 */
+/******************************/
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    padding: 15px;
+    margin: 15px;
+    color: #555;
+    font-size: 12px;
+    font-family: helvetica, sans-serif;
+}
+
+.center {
+    text-align: center;
+}
+
+.small {
+    font-size: 75%;
+}
+
+p {
+    padding: 0;
+    margin: 10px 0;
+}
+
+li {
+    list-style-type: none;
+    list-style-image: none;
+}
+
+a img {
+    border: none;
+}
+
+form {
+    padding: 0;
+    margin: 0 0 25px 0;
+}
+
+fieldset {
+    border: 1px solid #bbb;
+    padding: 15px;
+    margin: 10px;
+}
+
+fieldset fieldset {
+    border: 1px dashed #bbb;
+}
+
+legend {
+    font-weight: bold;
+    padding: 0 5px 10px 5px;
+    background-color: #fff;
+}
+
+label {
+    display: block;
+    padding: 0;
+    margin: 15px 10px 0 10px;
+    color: #069;
+    font-weight: bold;
+}
+
+.labelText {
+    margin: 15px 10px 5px 10px;
+    color: #069;
+    font-weight: bold;
+}
+
+input {
+    color: #555;
+    display: block;
+    padding: 2px;
+    margin: 5px 10px;
+}
+
+textarea {
+    border: 1px solid #999;
+}
+
+select {
+    padding: 2px;
+    margin: 5px 10px;
+    display: block;
+    width: 256px;
+    border: 1px solid #999;
+}
+
+input[type="text"], input[type="password"] {
+    display: inline;
+    width: 250px;
+    margin-right: 0;
+    border: 1px solid #999;
+}
+
+input[type="text"] + div.errorMessage {
+    display: inline;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    margin-left: 10px;
+}
+
+input[type="radio"] + label,
+input[type="checkbox"] + label {
+    display: inline;
+    padding: 0;
+    margin: 0 20px 0 3px;
+    vertical-align: top;
+}
+
+input[type="submit"] {
+    color: #080;
+}
+
+input[type="reset"] {
+    color: #b00;
+}
+
+input[type="hidden"] {
+    padding: 0;
+    margin: 0;
+}
+
+.autocomplete {
+    position: absolute;
+    margin: -6px 0 0 10px;
+    visibility: hidden;
+    background-color: white;
+    z-index: 1;    
+    width: 250px;
+    height: 140px;
+    border: 1px solid #999;
+    overflow: auto;
+    padding: 2px;
+}
+
+.autocomplete div {
+    margin: 0 auto;
+    text-align:left;
+}
+
+.autocomplete div ul li {
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.autocomplete div ul {
+    width: 100%;
+    font-size: 11px;
+    font-weight: normal;
+    color: #676767;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 0px;
+    padding: 0;  
+    text-align:left;   
+    margin: 0;
+}
+
+.highlight {
+    color: #fff;
+    background-color: #555;
+    cursor: pointer;
+}
+
+.errorMessage {
+    color: #d00;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+#errors div {
+    margin: 0 10px;
+    border: 1px dashed #d00;
+}
+
+#errors h2 {
+    color: #d00;
+    font-weight: bold;
+    padding-left: 10px;
+    border-bottom: 1px dashed #d00;
+}
+
+#errors li.errorMessage {
+    margin: 10px;
+}

@@ -1,18 +1,19 @@
 <?php
 
 /******************************/
-/* version 0.2.9 @ 2010.03.13 */
+/* version 0.3.0 @ 2010.04.15 */
 /******************************/
 
 require_once("config.autocomplete.php");
 
-class autoComplete
+class AutoComplete
 {
     //-----------------------------------------------------------------------------------------------------------------
     protected $_searchType;
     protected $_mysqli;
-    protected $_response;
+    protected $_response = array();
     protected $_responseXml;
+    protected $_array = array();
     //-----------------------------------------------------------------------------------------------------------------
     public function setSearchType($value)
     {
@@ -26,6 +27,17 @@ class autoComplete
     public function getSearchType()
     {
         return $this->_searchType;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function getArray($where, $type)
+    {
+        if($this->getSearchType() == "xml") {
+            $this->readXml($where, $type);
+        }
+        if($this->getSearchType() == "db") {
+            $this->readDb($where, $type);
+        }
+        return $this->_array;
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function __construct($searchType = NULL)
@@ -82,9 +94,37 @@ class autoComplete
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
-    protected function xmlSearch($file, $node, $keyword)
+    protected function xmlSearch($filename, $node, $keyword)
     {
-        $filename = $file . ".xml";
+        $this->readXml($filename, $node);
+        $keyword = $this->keywordFilter($keyword);
+        if($keyword != "") {
+            foreach ($this->_array as $tmp) {
+                if(mb_stripos($tmp, $keyword, NULL, "utf-8") !== FALSE &&
+                   mb_stripos($tmp, $keyword, NULL, "utf-8") == 0) {
+                    $this->_response[] = $tmp;
+                }
+            }
+            sort($this->_response);
+        }
+        else {
+            $this->_response = NULL;
+        }
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    protected function readDb($table, $field)
+    {
+        $query = "SELECT {$field} FROM {$table} ORDER BY {$field}";
+        $result = $this->_mysqli->query($query);
+        if($result->num_rows) {
+            while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                $this->_array[] = $row["{$field}"];
+            }
+        }
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    protected function readXml($filename, $node)
+    {
         if (!file_exists($filename)) {
             throw new Exception("Wrong file and/or path name, or non-exsiting file");
         }
@@ -94,20 +134,7 @@ class autoComplete
         }
         $result = $xml->xpath("//{$node}");
         foreach($result as $tmp) {
-            $array[] = (string)$tmp[0];
-        }
-        $keyword = $this->keywordFilter($keyword);
-        if($keyword != "") {
-            foreach ($array as $tmp) {
-                if(mb_stripos($tmp, $keyword, null, "utf-8") !== FALSE &&
-                   mb_stripos($tmp, $keyword, null, "utf-8") == 0) {
-                    $this->_response[] = $tmp;
-                }
-            }
-            sort($this->_response);
-        }
-        else {
-            $this->_response = NULL;
+            $this->_array[] = (string)$tmp[0];
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
@@ -133,4 +160,5 @@ class autoComplete
     }
     //-----------------------------------------------------------------------------------------------------------------
 }
+
 ?>

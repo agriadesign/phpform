@@ -1,8 +1,11 @@
 <?php
 
 /******************************/
-/* version 0.2.9 @ 2010.03.13 */
+/* version 0.3.0 @ 2010.04.15 */
 /******************************/
+
+require_once("javascript/class.javascript.php");
+require_once("javascript/class.autocomplete.php");
 
 class Form
 {
@@ -12,10 +15,12 @@ class Form
     protected $_enctype;
     protected $_XHTML;
     protected $_validation;
-    protected $_validator;
+    protected $_javaScript;
+    protected $_messageType;
     protected $_testMode;
     protected $_form = array();
     protected $_fieldsetId = array();
+    protected $_autoCompletes = 0;
     protected static $_instanceCounter = 0;
     //-----------------------------------------------------------------------------------------------------------------
     public function setAction($value)
@@ -84,7 +89,7 @@ class Form
         if (!is_bool($value)) {
             throw new Exception("<strong>{$value}</strong> is not a valid value for the 'XHTML' attribute");
         }
-        $this->_XHTML =  $value;
+        $this->_XHTML = $value;
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function getXHTML()
@@ -102,13 +107,35 @@ class Form
         }
         if (!is_bool($value)) {
                 throw new Exception("<strong>{$value}</strong> is not a valid value for the 'validation' attribute");
-            }
-            $this->_validation =  $value;
+        }
+        $this->_validation = $value;
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function getValidation()
     {
         return $this->_validation;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function setMessageType($value)
+    {
+        if($value == 1) {
+            $value = "next";
+        }
+        if($value == 2) {
+            $value = "bottom";
+        }
+        $value = strtolower($value);
+        if($value != "alert" &&
+           $value != "next" &&
+           $value != "bottom") {
+            throw new Exception("<strong>{$value}</strong> is not a valid value for the 'messageType' attribute");
+        }
+            $this->_messageType = $value;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function getMessageType()
+    {
+        return $this->_messageType;
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function setTestMode($value)
@@ -123,6 +150,7 @@ class Form
             throw new Exception("<strong>{$value}</strong> is not a valid value for the 'testMode' attribute");
         }
         $this->_testMode =  $value;
+        $this->_javaScript->setTestMode($value);
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function getTestMode()
@@ -140,7 +168,8 @@ class Form
         return self::$_instanceCounter;
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function __construct($action = NULL, $method = NULL, $enctype = NULL, $XHTML = NULL, $validation = NULL)
+    public function __construct($action = NULL, $method = NULL, $enctype = NULL, $XHTML = NULL,
+                                $validation = NULL, $messageType = NULL)
     {
         if(empty($action)) {
             $this->setAction("");
@@ -172,8 +201,14 @@ class Form
         }
         else {
             $this->setValidation($validation);
+            if(empty($messageType)) {
+                $this->setMessageType("alert");
+            }
+            else {
+                $this->setMessageType($messageType);
+            }
         }
-        $this->_validator = new Validator($this->getInstanceCounter());
+        $this->_javaScript = new JavaScript($this->getInstanceCounter() ,$this->_messageType);
         $this->setTestMode(FALSE);
         $this->open();
     }
@@ -231,6 +266,7 @@ class Form
     {
         $this->_form[] = array('tag'     => 'label',
                                'status'  => 'open',
+                               'id'      => $this->id(),
                                'for'     => $name,
                                'content' => $content);
         $this->_form[] = array('tag'    => 'label',
@@ -308,8 +344,14 @@ class Form
     public function select($name, array $options, $selected = NULL,
                            array $optGroups = NULL, $size = NULL, $multiple = NULL)
     {
-        if(!isset($multiple) && is_array($selected)) {
-            $selected = $selected[0];
+        if(isset($multiple)) {
+            $name = $name . "[]";
+            
+        }
+        else {
+            if(is_array($selected)) {
+                $selected = $selected[0];
+            }
         }
         $this->_form[] = array('tag'    => 'select',
                                'status' => 'open',
@@ -364,7 +406,7 @@ class Form
                                'status' => 'close');
     }
     //-----------------------------------------------------------------------------------------------------------------
-    public function textarea($cols, $rows, $name, $content = NULL)
+    public function textarea($name, $cols, $rows, $content = NULL)
     {
         $this->_form[] = array('tag'    => 'textarea',
                                'status' => 'open',
@@ -401,7 +443,14 @@ class Form
     {
         $this->_form[] = array('tag'    => 'form',
                                'status' => 'close');
-        $this->replaceForValues();
+        if($this->getMessageType() == "bottom") {
+            $this->_form[] = array('tag'    => 'div',
+                                   'status' => 'open',
+                                   'id'      => 'errors');
+            $this->_form[] = array('tag'    => 'div',
+                                   'status' => 'close');
+        }
+        $this->replaceValues();
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function render()
@@ -431,6 +480,7 @@ class Form
         $k = 0;
         $tagName = "";
         $contentValue = "";
+        $output = "";
         foreach($this->_form as $tagArray) {
             foreach($tagArray as $key => $value) {
                 switch($key) {
@@ -446,11 +496,11 @@ class Form
                         else {
                             $j = $i;
                         }
-                        echo "{$tabs[$i-$j]}{$lt}/{$tagName}";
+                        $output .= "{$tabs[$i-$j]}{$lt}/{$tagName}";
                         $j = 0;
                     }
                     else {
-                        echo "{$tabs[$i]}{$lt}{$tagName}";
+                        $output .= "{$tabs[$i]}{$lt}{$tagName}";
                         if($tagName == "form"   || $tagName == "fieldset" ||
                            $tagName == "select" || $tagName == "optgroup") {
                             $i = count($tabs) -1 > $i ? $i + 1 : count($tabs) -1;
@@ -461,39 +511,45 @@ class Form
                         $contentValue = $value;
                     break;
                     case "html":
-                        echo "{$tabs[$i]}{$value}\n";
+                        if($this->getTestMode()) {
+                            $patterns = array("/</", "/>/");
+                            $replacements = array("&lt;", "&gt;");
+                            $value = preg_replace($patterns, $replacements, $value);
+                        }
+                        $output .= "{$tabs[$i]}{$value}\n";
                     break;
                     case "fieldsetid":
                     break;
                     default:
-                        echo ' ' . $key . '="' . $value . '"';
+                        $output .= ' ' . $key . '="' . $value . '"';
                     break;
                 }
             }
             if($key != "html") {
                 if($contentValue == "") {
                     if($tagArray['status'] == "empty") {
-                        echo " /{$gt}\n";
+                        $output .= " /{$gt}\n";
                     }
                     else {
                         if($this->_form[$k]['tag'] == $this->_form[$k + 1]['tag'] &&
                            $this->_form[$k]['status'] == "open" && $this->_form[$k + 1]['status'] == "close") {
-                            echo "{$gt}";
+                            $output .= "{$gt}";
                         }
                         else {
-                            echo "{$gt}\n";
+                            $output .= "{$gt}\n";
                         }
                     }
                 }
                 else {
-                    echo "{$gt}{$contentValue}";
+                    $output .= "{$gt}{$contentValue}";
                 }
                 $contentValue = "";
             }
             $k++;
         }
+        echo $output;
         if($this->getValidation()) {
-            $this->_validator->render();
+            $this->_javaScript->render();
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
@@ -507,13 +563,28 @@ class Form
             $this->_form[$this->index()]["maxlength"] = $maxLength;
         }
         $id = 'form-' . $this->getInstanceCounter() . '-' . $this->index();
-        $this->_validator->mask($id, $type);
+        $this->_javaScript->mask($id, $type);
     }
     //-----------------------------------------------------------------------------------------------------------------
     public function validate($type)
     {
         $id = 'form-' . $this->getInstanceCounter() . '-' . $this->index();
-        $this->_validator->validate($id, $type);
+        if($this->getMessageType() == "next") {
+            $this->_form[] = array('tag'    => 'div',
+                                   'status' => 'open',
+                                   'class'  => 'errorMessage',
+                                   'id'     => $id . '-error');
+            $this->_form[] = array('tag'    => 'div',
+                                   'status' => 'close');
+        }
+        $this->_javaScript->validate($id, $type);
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function autoComplete($search, $where, $type)
+    {
+        $id = 'form-' . $this->getInstanceCounter() . '-' . $this->index();
+        $instance = ++$this->_autoCompletes;
+        $this->_javaScript->AutoComplete($search, $where, $type, $id, $instance);
     }
     //-----------------------------------------------------------------------------------------------------------------
     protected function index()
@@ -526,7 +597,7 @@ class Form
         return 'form-' . $this->getInstanceCounter() . '-' . count($this->_form);
     }
     //-----------------------------------------------------------------------------------------------------------------
-    protected function replaceForValues()
+    protected function replaceValues()
     {
         $count = count($this->_form);
         for($i = 0; $i < $count; $i++) {
@@ -541,7 +612,12 @@ class Form
                    $this->_form[$i + 2]['name'] == $this->_form[$i]['for']) {
                     $this->_form[$i]['for'] = $this->_form[$i + 2]['id'];
                 }
-            } 
+            }
+        }
+        for($i = 0; $i < $count; $i++) {
+            if(isset($this->_form[$i]['type']) && $this->_form[$i]['type'] == "checkbox") {
+                    $this->_form[$i]['name'] = substr($this->_form[$i]['name'], 0, -2) . "[]";
+                }
         }
     }
     //-----------------------------------------------------------------------------------------------------------------
@@ -561,8 +637,19 @@ class Form
     //-----------------------------------------------------------------------------------------------------------------
     public function __toString()
     {
-        return print_r($this->_form, TRUE);
+        $this->replaceValues();
+        $patterns = array("/</", "/>/");
+        $replacements = array("&lt;", "&gt;");
+        $length = count($this->_form);
+        for($i = 0; $i < $length; $i++) {
+            $form[$i] = preg_replace($patterns, $replacements, $this->_form[$i]);
+        }
+        ob_start();
+        print_r($form);
+        echo $this->_javaScript;
+        return ob_get_clean();
     }
     //-----------------------------------------------------------------------------------------------------------------
 }
+
 ?>

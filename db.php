@@ -16,8 +16,8 @@
 require_once("form/class.form.php");
 
 //---------------------------------------------------------------------------------------------------------------------
-$dynamicField = new autoComplete("xml");
-$options = $dynamicField->getArray("data/counties.xml", "name");
+$dynamicField = new autoComplete("db");
+$options = $dynamicField->getArray("counties", "name");
 $options2 = array("Húsleves",
                   "Gulyásleves",
                   "Gyümölcsleves",
@@ -65,7 +65,7 @@ $form->label("megye", "Megye");
 $form->select("megye", $options, "Heves megye");
 $form->label("varos", "Város");
 $form->input("text", array("varos"));
-$form->autoComplete("xml", "../data/zipcodes.xml", "name");
+$form->autoComplete("db", "zipcodes", "name");
 $form->label("iranyitoszam", "Irányítószám");
 $form->input("text", array("iranyitoszam"));
 $form->label("utca", "Utca, házszám");

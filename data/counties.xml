@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<counties>
+    <county>
+        <name>Bács-Kiskun megye</name>
+    </county>
+    <county>
+        <name>Baranya megye</name>
+    </county>
+    <county>
+        <name>Békés megye</name>
+    </county>
+    <county>
+        <name>Borsod-Abaúj-Zemplén megye</name>
+    </county>
+    <county>
+        <name>Csongrád megye</name>
+    </county>
+    <county>
+        <name>Fejér megye</name>
+    </county>
+    <county>
+        <name>Győr-Moson-Sopron megye</name>
+    </county>
+    <county>
+        <name>Hajdú-Bihar megye</name>
+    </county>
+    <county>
+        <name>Heves megye</name>
+    </county>
+    <county>
+        <name>Jász-Nagykun-Szolnok megye</name>
+    </county>
+    <county>
+        <name>Komárom-Esztergom megye</name>
+    </county>
+    <county>
+        <name>Nógrád megye</name>
+    </county>
+    <county>
+        <name>Pest megye</name>
+    </county>
+    <county>
+        <name>Somogy megye</name>
+    </county>
+    <county>
+        <name>Szabolcs-Szatmár-Bereg megye</name>
+    </county>
+    <county>
+        <name>Tolna megye</name>
+    </county>
+    <county>
+        <name>Vas megye</name>
+    </county>
+    <county>
+        <name>Veszprém megye</name>
+    </county>
+    <county>
+        <name>Zala megye</name>
+    </county>
+</counties>
