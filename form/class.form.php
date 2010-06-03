@@ -1,9 +1,5 @@
 <?php
 
-/******************************/
-/* version 0.3.0 @ 2010.04.15 */
-/******************************/
-
 require_once("javascript/class.javascript.php");
 require_once("javascript/class.autocomplete.php");
 
