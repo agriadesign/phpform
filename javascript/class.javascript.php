@@ -1,9 +1,5 @@
 <?php
 
-/******************************/
-/* version 0.3.0 @ 2010.04.15 */
-/******************************/
-
 class JavaScript
 {
     //-----------------------------------------------------------------------------------------------------------------
@@ -133,7 +129,12 @@ class JavaScript
                 $output .= '};' . "\n";
             }
             if(!$emptyAutoCompletes) {
-                $output .= 'var xhr = xmlHttpRequestObject.init();' . "\n";
+                $output .= '$().ready(function() {' . "\n";
+                foreach($this->_autoCompletes as $tmp) {
+                    $output .= "\t" . '$("#' . $tmp['id'] . '").autocomplete("javascript/jquery.php?search=' .
+                    $tmp['search'] . '&where=' . $tmp['where'] . '&type=' . $tmp['type'] . '");' . "\n";
+                }
+                /*$output .= 'var xhr = xmlHttpRequestObject.init();' . "\n";
                 foreach($this->_autoCompletes as $tmp) {
                     $ac = "ac" . $id . $tmp['instance'];
                     $output .= 'var ' . $ac . ' = new AutoComplete(xhr, "' . $tmp['search'] . '", "' .
@@ -141,7 +142,8 @@ class JavaScript
                                                                              $tmp['type'] . '", "' .
                                                                              $tmp['id'] . '", "' .
                                                                              $ac . '");' . "\n";
-                }
+                }*/
+            $output .= '});' . "\n";
             }
             $output .= '//]]' . $gt . "\n" . $lt . '/script' . $gt . "\n";
             echo $output;
