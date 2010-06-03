@@ -1,9 +1,5 @@
 <?php
 
-/******************************/
-/* version 0.3.0 @ 2010.04.15 */
-/******************************/
-
 require_once("config.autocomplete.php");
 
 class AutoComplete
@@ -157,6 +153,20 @@ class AutoComplete
         }
         $this->_responseXml .= '</response>';
         return $this->_responseXml;
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+    public function getText($where, $type, $keyword)
+    {
+        if($this->getSearchType() == "xml") {
+            $this->xmlSearch($where, $type, $keyword);
+        }
+        if($this->getSearchType() == "db") {
+            $this->dbSearch($where, $type, $keyword);
+        }
+        foreach ($this->_response as $tmp) {
+            $output .= $tmp . "\n";
+        }
+        return $output;
     }
     //-----------------------------------------------------------------------------------------------------------------
 }
