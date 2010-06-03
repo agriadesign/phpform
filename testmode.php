@@ -3,13 +3,14 @@
 <head>
 <title>&lt;?php form&gt;</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" href="styles/style.css" type="text/css" />
-<script type="text/javascript" src="javascript/class.autocomplete.js"></script>
+<link rel="stylesheet" type="text/css" href="styles/style.css" />
+<link rel="stylesheet" type="text/css" href="styles/jquery.autocomplete.css" />
 <script type="text/javascript" src="javascript/class.inputmask.js"></script>
 <script type="text/javascript" src="javascript/class.validator.js"></script>
+<script type="text/javascript" src="javascript/jquery-1.4.2.min.js"></script>
+<script type='text/javascript' src="javascript/jquery.autocomplete.min.js"></script>
 </head>
 <body>
-<p class="center small"><strong>version 0.3.0 @ 2010.04.15</strong></p>
 
 <?php
 
