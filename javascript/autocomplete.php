@@ -1,9 +1,5 @@
 <?php
 
-/******************************/
-/* version 0.3.0 @ 2010.04.15 */
-/******************************/
-
 require_once("class.autocomplete.php");
 
 $search = $_GET["search"];
