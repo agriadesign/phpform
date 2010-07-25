@@ -131,7 +131,7 @@ class JavaScript
             if(!$emptyAutoCompletes) {
                 $output .= '$().ready(function() {' . "\n";
                 foreach($this->_autoCompletes as $tmp) {
-                    $output .= "\t" . '$("#' . $tmp['id'] . '").autocomplete("javascript/jquery.php?search=' .
+                    $output .= "\t" . '$("#' . $tmp['id'] . '").autocomplete("../phpform/jquery.php?search=' .
                     $tmp['search'] . '&where=' . $tmp['where'] . '&type=' . $tmp['type'] . '");' . "\n";
                 }
                 /*$output .= 'var xhr = xmlHttpRequestObject.init();' . "\n";

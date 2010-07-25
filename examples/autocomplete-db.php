@@ -3,18 +3,18 @@
 <head>
 <title>&lt;?php form&gt;</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="styles/style.css" />
-<link rel="stylesheet" type="text/css" href="styles/jquery.autocomplete.css" />
-<script type="text/javascript" src="javascript/class.inputmask.js"></script>
-<script type="text/javascript" src="javascript/class.validator.js"></script>
-<script type="text/javascript" src="javascript/jquery-1.4.2.min.js"></script>
-<script type='text/javascript' src="javascript/jquery.autocomplete.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../styles/style.css" />
+<link rel="stylesheet" type="text/css" href="../styles/jquery.autocomplete.css" />
+<script type="text/javascript" src="../library/class.inputmask.js"></script>
+<script type="text/javascript" src="../library/class.validator.js"></script>
+<script type="text/javascript" src="../library/jquery-1.4.2.min.js"></script>
+<script type='text/javascript' src="../library/jquery.autocomplete.min.js"></script>
 </head>
 <body>
 
 <?php
 
-require_once("form/class.form.php");
+require_once("../phpform/class.form.php");
 
 //---------------------------------------------------------------------------------------------------------------------
 $dynamicField = new autoComplete("db");

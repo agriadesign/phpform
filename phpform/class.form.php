@@ -1,7 +1,7 @@
 <?php
 
-require_once("javascript/class.javascript.php");
-require_once("javascript/class.autocomplete.php");
+require_once("class.javascript.php");
+require_once("class.autocomplete.php");
 
 class Form
 {
