@@ -134,15 +134,6 @@ class JavaScript
                     $output .= "\t" . '$("#' . $tmp['id'] . '").autocomplete("../phpform/jquery.php?search=' .
                     $tmp['search'] . '&where=' . $tmp['where'] . '&type=' . $tmp['type'] . '");' . "\n";
                 }
-                /*$output .= 'var xhr = xmlHttpRequestObject.init();' . "\n";
-                foreach($this->_autoCompletes as $tmp) {
-                    $ac = "ac" . $id . $tmp['instance'];
-                    $output .= 'var ' . $ac . ' = new AutoComplete(xhr, "' . $tmp['search'] . '", "' .
-                                                                             $tmp['where'] . '", "' .
-                                                                             $tmp['type'] . '", "' .
-                                                                             $tmp['id'] . '", "' .
-                                                                             $ac . '");' . "\n";
-                }*/
             $output .= '});' . "\n";
             }
             $output .= '//]]' . $gt . "\n" . $lt . '/script' . $gt . "\n";
