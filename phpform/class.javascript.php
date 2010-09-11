@@ -111,13 +111,6 @@ class JavaScript
         if(!$emptyChecks || !$emptyMasks || !$emptyAutoCompletes) {
             $id = $this->getFormId();
             $output .= $lt . 'script type="text/javascript"' . $gt . "\n" . '//' . $lt . '![CDATA[' . "\n";
-            if(!$emptyMasks) {
-                $m = "im" . $id;
-                $output .= 'var ' . $m . ' = new InputMask();' . "\n";
-                foreach($this->_masks as $tmp) {
-                    $output .= $m . '.mask("' . $tmp['id'] . '", "' . $tmp['type'] . '");' . "\n";
-                }
-            }
             if(!$emptyChecks) {
                 $v = "val" . $id;
                 $output .= 'document.forms["form-' . $id . '-0"].onsubmit = function()' . "\n" . '{' . "\n";
@@ -128,14 +121,19 @@ class JavaScript
                 $output .= "\t" . 'return ' . $v . '.validateForm();' . "\n";
                 $output .= '};' . "\n";
             }
+            $output .= '$().ready(function() {' . "\n";
+            if(!$emptyMasks) {
+                foreach($this->_masks as $tmp) {
+                    $output .= "\t" . '$("#' . $tmp['id'] . '").mask("'. $tmp['type'] . '", {placeholder:" "});' . "\n";
+                }
+            }
             if(!$emptyAutoCompletes) {
-                $output .= '$().ready(function() {' . "\n";
                 foreach($this->_autoCompletes as $tmp) {
                     $output .= "\t" . '$("#' . $tmp['id'] . '").autocomplete("../phpform/autocomplete.php?search=' .
                     $tmp['search'] . '&where=' . $tmp['where'] . '&type=' . $tmp['type'] . '");' . "\n";
                 }
-            $output .= '});' . "\n";
             }
+            $output .= '});' . "\n";
             $output .= '//]]' . $gt . "\n" . $lt . '/script' . $gt . "\n";
             echo $output;
         }
