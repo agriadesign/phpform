@@ -5,9 +5,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="../styles/style.css" />
 <link rel="stylesheet" type="text/css" href="../styles/jquery.autocomplete.css" />
-<script type="text/javascript" src="../library/class.inputmask.js"></script>
 <script type="text/javascript" src="../library/class.validator.js"></script>
 <script type="text/javascript" src="../library/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../library/jquery.maskedinput-1.2.2.min.js"></script>
 <script type='text/javascript' src="../library/jquery.autocomplete.min.js"></script>
 </head>
 <body>
@@ -40,7 +40,7 @@ $form->fieldset("Regisztrációs űrlap");
 $form->fieldset("Személyes adatok");
 $form->label("nev", "Név");
 $form->input("text", array("nev"));
-$form->mask("n");
+//$form->mask("n");
 $form->validate("n");
 $form->label("email", "E-mail cím");
 $form->input("text", array("email"));
@@ -51,7 +51,7 @@ $form->label("jelszo2", "Jelszó még egyszer");
 $form->input("password", array("jelszo2"));
 $form->label("szulido", "Születési idő");
 $form->input("text", array("szulido"));
-$form->mask("dddd-dd-dd");
+$form->mask("9999-99-99");
 $form->validate("c");
 $form->html('<p class="labelText">Neme</p>');
 $form->input("radio", array("nem", "férfi"));
